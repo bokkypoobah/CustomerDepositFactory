@@ -1,21 +1,16 @@
 pragma solidity ^0.4.8;
  
 // ----------------------------------------------------------------------------------------------
-// Unique ICO deposit contacts for customers to deposit ethers that are sent to different
-// wallets
+// Unique deposit contacts for customers to deposit ethers that are sent to different wallets
 //
 // Enjoy. (c) Bok Consulting Pty Ltd & Incent Rewards 2017. The MIT Licence.
 // ----------------------------------------------------------------------------------------------
  
 contract Owned {
-    // CHECK: Ok
     address public owner;
-    // CHECK: Ok
     event OwnershipTransferred(address indexed _from, address indexed _to);
  
-    // CHECK: Ok
     function Owned() {
-        // CHECK: Ok
         owner = msg.sender;
     }
  
@@ -29,43 +24,49 @@ contract Owned {
         owner = newOwner;
     }
 }
- 
-contract ICODepositContract {
+
+contract CustomerDeposit {
     uint256 public totalDeposit;
-    ICOCustomerDeposit public customerDeposit;
+    CustomerDepositFactory public factory;
  
-    function ICODepositContract(ICOCustomerDeposit _customerDeposit) {
-        customerDeposit = _customerDeposit;
+    function CustomerDeposit(CustomerDepositFactory _factory) {
+        factory = _factory;
     }
  
     function () payable {
         totalDeposit += msg.value;
-        customerDeposit.customerDepositedEther.value(msg.value)();
+        factory.receiveDeposit.value(msg.value)();
     }
 }
- 
-contract ICOCustomerDeposit is Owned {
-    uint256 public totalDeposits;
-    ICODepositContract[] public contracts;
- 
-    event Deposit(address indexed _from, uint _value);
+
+contract CustomerDepositFactory is Owned {
+    uint256 public totalDeposits = 0;
+    CustomerDeposit[] public addresses;
+    mapping (address => bool) public check;
+
+    // NOTE: Remix is not handling indexed addresses 
+    event DepositContractCreated(uint256 number, address icoDepositContract);
+    event DepositReceived(address icoDepositContract, uint _value);
  
     // Define destination addresses
     // 0.5%
-    address incentToCustomer = 0xa5f93F2516939d592f00c1ADF0Af4ABE589289ba;
+    address public constant incentToCustomer = 0xa5f93F2516939d592f00c1ADF0Af4ABE589289ba;
     // 0.5%
-    address icoFees = 0x38671398aD25461FB446A9BfaC2f4ED857C86863;
+    address public constant icoFees = 0x38671398aD25461FB446A9BfaC2f4ED857C86863;
     // 99%
-    address icoClientWallet = 0x994B085D71e0f9a7A36bE4BE691789DBf19009c8;
+    address public constant icoClientWallet = 0x994B085D71e0f9a7A36bE4BE691789DBf19009c8;
  
-    function createNewDepositContract(uint256 number) onlyOwner {
+    function createDepositContracts(uint256 number) onlyOwner {
         for (uint256 i = 0; i < number; i++) {
-            ICODepositContract depositContract = new ICODepositContract(this);
-            contracts.push(depositContract);
+            CustomerDeposit customerDeposit = new CustomerDeposit(this);
+            addresses.push(customerDeposit);
+            check[customerDeposit] = true;
+            DepositContractCreated(addresses.length, customerDeposit);
         }
     }
  
-    function customerDepositedEther() payable {
+    function receiveDeposit() payable {
+        if (!check[msg.sender]) throw;
         totalDeposits += msg.value;
         uint256 value1 = msg.value * 1 / 200;
         if (!incentToCustomer.send(value1)) throw;
@@ -73,7 +74,7 @@ contract ICOCustomerDeposit is Owned {
         if (!icoFees.send(value2)) throw;
         uint256 value3 = msg.value - value1 - value2;
         if (!icoClientWallet.send(value3)) throw;
-        Deposit(msg.sender, msg.value);
+        DepositReceived(msg.sender, msg.value);
     }
  
     // Prevent accidental sending of ethers
