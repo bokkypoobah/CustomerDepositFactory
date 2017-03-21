@@ -44,20 +44,20 @@ contract CustomerDepositFactory is Owned {
     CustomerDeposit[] public depositContracts;
     mapping (address => bool) public isDepositContract;
 
-    // NOTE: Remix is not handling indexed addresses 
-    event DepositContractCreated(address icoDepositContract, uint256 number);
-    event DepositReceived(address icoDepositContract, uint _value);
+    // NOTE: Remix does not handle indexed addresses correctly
+    event DepositContractCreated(address indexed icoDepositContract, uint256 number);
+    event DepositReceived(address indexed icoDepositContract, uint _value);
 
     // Incent account - 0.5%
     uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
-    address public incentAccount = 0xa5f93F2516939d592f00c1ADF0Af4ABE589289ba;
-    
+    address public incentAccount = {{INCENTACCOUNT}};
+
     // Fees - 0.5%
     uint256 public constant FEE_RATE_PER_THOUSAND = 5;
-    address public constant feeAccount = 0x38671398aD25461FB446A9BfaC2f4ED857C86863;
-    
+    address public constant feeAccount = {{FEEACCOUNT}};
+
     // Client account - remainder of sent amount
-    address public constant clientAccount = 0x994B085D71e0f9a7A36bE4BE691789DBf19009c8;
+    address public constant clientAccount = {{CLIENTACCOUNT}};
 
     function createDepositContracts(uint256 number) onlyOwner {
         for (uint256 i = 0; i < number; i++) {
@@ -71,22 +71,22 @@ contract CustomerDepositFactory is Owned {
     function receiveDeposit() payable {
         // Can only receive ethers from deposit contracts created by this factory
         if (!isDepositContract[msg.sender]) throw;
-        
+
         // Record total deposits
         totalDeposits += msg.value;
-        
+
         // Send amount to incent address
         uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000;
         if (!incentAccount.send(value1)) throw;
-        
+
         // Send fee to the fee address
         uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000;
         if (!feeAccount.send(value2)) throw;
-        
+
         // Send the remainder to the client's wallet
         uint256 value3 = msg.value - value1 - value2;
         if (!clientAccount.send(value3)) throw;
-        
+
         DepositReceived(msg.sender, msg.value);
     }
 
