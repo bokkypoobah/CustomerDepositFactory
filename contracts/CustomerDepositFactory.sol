@@ -41,43 +41,56 @@ contract CustomerDeposit {
 
 contract CustomerDepositFactory is Owned {
     uint256 public totalDeposits = 0;
-    CustomerDeposit[] public addresses;
-    mapping (address => bool) public check;
+    CustomerDeposit[] public depositContracts;
+    mapping (address => bool) public isDepositContract;
 
     // NOTE: Remix is not handling indexed addresses 
-    event DepositContractCreated(uint256 number, address icoDepositContract);
+    event DepositContractCreated(address icoDepositContract, uint256 number);
     event DepositReceived(address icoDepositContract, uint _value);
 
-    // Define destination addresses
-    // 0.5%
-    address public constant incentToCustomer = 0xa5f93F2516939d592f00c1ADF0Af4ABE589289ba;
-    // 0.5%
-    address public constant icoFees = 0x38671398aD25461FB446A9BfaC2f4ED857C86863;
-    // 99%
-    address public constant icoClientWallet = 0x994B085D71e0f9a7A36bE4BE691789DBf19009c8;
+    // Incent account - 0.5%
+    uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
+    address public incentAccount = 0xa5f93F2516939d592f00c1ADF0Af4ABE589289ba;
+    
+    // Fees - 0.5%
+    uint256 public constant FEE_RATE_PER_THOUSAND = 5;
+    address public constant feeAccount = 0x38671398aD25461FB446A9BfaC2f4ED857C86863;
+    
+    // Client account - remainder of sent amount
+    address public constant clientAccount = 0x994B085D71e0f9a7A36bE4BE691789DBf19009c8;
 
     function createDepositContracts(uint256 number) onlyOwner {
         for (uint256 i = 0; i < number; i++) {
             CustomerDeposit customerDeposit = new CustomerDeposit(this);
-            addresses.push(customerDeposit);
-            check[customerDeposit] = true;
-            DepositContractCreated(addresses.length, customerDeposit);
+            depositContracts.push(customerDeposit);
+            isDepositContract[customerDeposit] = true;
+            DepositContractCreated(customerDeposit, depositContracts.length);
         }
     }
 
     function receiveDeposit() payable {
-        if (!check[msg.sender]) throw;
+        // Can only receive ethers from deposit contracts created by this factory
+        if (!isDepositContract[msg.sender]) throw;
+        
+        // Record total deposits
         totalDeposits += msg.value;
-        uint256 value1 = msg.value * 1 / 200;
-        if (!incentToCustomer.send(value1)) throw;
-        uint256 value2 = msg.value * 1 / 200;
-        if (!icoFees.send(value2)) throw;
+        
+        // Send amount to incent address
+        uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000;
+        if (!incentAccount.send(value1)) throw;
+        
+        // Send fee to the fee address
+        uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000;
+        if (!feeAccount.send(value2)) throw;
+        
+        // Send the remainder to the client's wallet
         uint256 value3 = msg.value - value1 - value2;
-        if (!icoClientWallet.send(value3)) throw;
+        if (!clientAccount.send(value3)) throw;
+        
         DepositReceived(msg.sender, msg.value);
     }
 
-    // Prevent accidental sending of ethers
+    // Prevent accidental sending of ethers to the factory
     function () {
         throw;
     }
