@@ -6,6 +6,19 @@ pragma solidity ^0.4.8;
 // Enjoy. (c) Bok Consulting Pty Ltd & Incent Rewards 2017. The MIT Licence.
 // ----------------------------------------------------------------------------------------------
 
+contract Config {
+    // Incent account - 0.5%
+    uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
+    address public incentAccount = {{INCENTACCOUNT}};
+
+    // Fees - 0.5%
+    uint256 public constant FEE_RATE_PER_THOUSAND = 5;
+    address public constant feeAccount = {{FEEACCOUNT}};
+
+    // Client account - remainder of sent amount
+    address public constant clientAccount = {{CLIENTACCOUNT}};
+}
+
 contract Owned {
     address public owner;
     event OwnershipTransferred(address indexed _from, address indexed _to);
@@ -39,25 +52,14 @@ contract CustomerDeposit {
     }
 }
 
-contract CustomerDepositFactory is Owned {
+contract CustomerDepositFactory is Owned, Config {
     uint256 public totalDeposits = 0;
     CustomerDeposit[] public depositContracts;
     mapping (address => bool) public isDepositContract;
 
     // NOTE: Remix does not handle indexed addresses correctly
-    event DepositContractCreated(address indexed icoDepositContract, uint256 number);
-    event DepositReceived(address indexed icoDepositContract, uint _value);
-
-    // Incent account - 0.5%
-    uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
-    address public incentAccount = {{INCENTACCOUNT}};
-
-    // Fees - 0.5%
-    uint256 public constant FEE_RATE_PER_THOUSAND = 5;
-    address public constant feeAccount = {{FEEACCOUNT}};
-
-    // Client account - remainder of sent amount
-    address public constant clientAccount = {{CLIENTACCOUNT}};
+    event DepositContractCreated(address indexed depositContract, uint256 number);
+    event DepositReceived(address indexed depositContract, uint _value);
 
     function createDepositContracts(uint256 number) onlyOwner {
         for (uint256 i = 0; i < number; i++) {
@@ -66,6 +68,10 @@ contract CustomerDepositFactory is Owned {
             isDepositContract[customerDeposit] = true;
             DepositContractCreated(customerDeposit, depositContracts.length);
         }
+    }
+
+    function numberOfDepositContracts() constant returns (uint) {
+        return depositContracts.length;
     }
 
     function receiveDeposit() payable {
