@@ -7,6 +7,12 @@ pragma solidity ^0.4.8;
 // ----------------------------------------------------------------------------------------------
 
 contract Config {
+    // Cannot receive funds before this date. DO NOT USE `now`
+    uint256 public constant DEPOSIT_DATE_FROM = {{DEPOSIT_DATE_FROM}};
+
+    // Cannot receive funds after this date. DO NOT USE `now`
+    uint256 public constant DEPOSIT_DATE_TO = {{DEPOSIT_DATE_TO}};
+
     // Incent account - 0.5%
     uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
     address public incentAccount = {{INCENTACCOUNT}};
@@ -57,6 +63,11 @@ contract CustomerDepositFactory is Owned, Config {
     CustomerDeposit[] public depositContracts;
     mapping (address => bool) public isDepositContract;
 
+    modifier fundingPeriodActive() {
+        if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw;
+        _;
+    }
+
     // NOTE: Remix does not handle indexed addresses correctly
     event DepositContractCreated(address indexed depositContract, uint256 number);
     event DepositReceived(address indexed depositContract, uint _value);
@@ -74,7 +85,7 @@ contract CustomerDepositFactory is Owned, Config {
         return depositContracts.length;
     }
 
-    function receiveDeposit() payable {
+    function receiveDeposit() fundingPeriodActive payable {
         // Can only receive ethers from deposit contracts created by this factory
         if (!isDepositContract[msg.sender]) throw;
 
