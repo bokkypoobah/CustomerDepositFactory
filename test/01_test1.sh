@@ -1,21 +1,11 @@
 #!/bin/sh
-# --------------------------------------------------------------------
-# Testing Customer Deposit Contracts
+# ----------------------------------------------------------------------------------------------
+# Testing the unique deposit contacts for customers to deposit ethers that are sent to 
+# different wallets
 #
-# Test 1
-# 1.1. Deploy Deposit Contract
-# 1.2. Create 1 Deposit Contract
-# 1.3. Create 10 Deposit Contract
-# 1.4. Create 20 Deposit Contract
-# 1.5. Check the number of accounts created
-# 1.6. Test Customer1 Deposit 10.23456789 ETH
-# What happens if tx runs out of gas part way
-# Should not be able to send funds directly to the factory contract
-# Move config to the top
-#
-#
-# (c) (c) Bok Consulting Pty Ltd & Incent Rewards 2017. The MIT licence.
-# --------------------------------------------------------------------
+# A collaboration between Incent and Bok :)
+# Enjoy. (c) Incent Loyalty Pty Ltd and Bok Consulting Pty Ltd 2017. The MIT Licence.
+# ----------------------------------------------------------------------------------------------
 
 GETHATTACHPOINT=`grep ^IPCFILE= settings.txt | sed "s/^.*=//"`
 PASSWORD=`grep ^PASSWORD= settings.txt | sed "s/^.*=//"`
