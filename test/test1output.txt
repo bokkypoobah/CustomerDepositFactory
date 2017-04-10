@@ -12,7 +12,7 @@ true
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100005.000000000000000000 Account #0 - Miner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100015.000000000000000000 Account #0 - Miner
 RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49   100000.000000000000000000 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
@@ -36,7 +36,7 @@ undefined
 > 
 {
   <stdin>:Config: {
-    code: "0x606060405260008054600160a060020a0319167220017ba4c67f76c76b1af8c41821ee54f37171179055341561003157fe5b5b6101f8806100416000396000f300606060405236156100675763ffffffff60e060020a600035041663056acde881146100695780635e12e6be1461006957806365e17c9d146100ad578063db79b1fe146100d9578063dce6b44714610105578063e70b575014610127578063ff35470314610153575bfe5b341561007157fe5b610079610175565b60408051918252519081900360200190f35b341561007157fe5b610079610175565b60408051918252519081900360200190f35b34156100b557fe5b6100bd61017f565b60408051600160a060020a039092168252519081900360200190f35b34156100e157fe5b6100bd610196565b60408051600160a060020a039092168252519081900360200190f35b341561010d57fe5b6100796101ad565b60408051918252519081900360200190f35b341561012f57fe5b6100bd6101b5565b60408051600160a060020a039092168252519081900360200190f35b341561015b57fe5b6100796101c4565b60408051918252519081900360200190f35b600581565b600581565b7236f6addb6d64684390f55a92f0f4988266901b81565b724e64833635cd1056b948b57286b7c91e62731c81565b6358eb974081565b600054600160a060020a031681565b6358eb96c8815600a165627a7a72305820e0f01a439ee5df911f228d8eeaa1ecf925e6c2e9fedc66e5a291c7ee95db152c0029",
+    code: "0x606060405260008054600160a060020a0319167220017ba4c67f76c76b1af8c41821ee54f37171179055341561003157fe5b5b6101f8806100416000396000f300606060405236156100675763ffffffff60e060020a600035041663056acde881146100695780635e12e6be1461006957806365e17c9d146100ad578063db79b1fe146100d9578063dce6b44714610105578063e70b575014610127578063ff35470314610153575bfe5b341561007157fe5b610079610175565b60408051918252519081900360200190f35b341561007157fe5b610079610175565b60408051918252519081900360200190f35b34156100b557fe5b6100bd61017f565b60408051600160a060020a039092168252519081900360200190f35b34156100e157fe5b6100bd610196565b60408051600160a060020a039092168252519081900360200190f35b341561010d57fe5b6100796101ad565b60408051918252519081900360200190f35b341561012f57fe5b6100bd6101b5565b60408051600160a060020a039092168252519081900360200190f35b341561015b57fe5b6100796101c4565b60408051918252519081900360200190f35b600581565b600581565b7236f6addb6d64684390f55a92f0f4988266901b81565b724e64833635cd1056b948b57286b7c91e62731c81565b6358eba28481565b600054600160a060020a031681565b6358eba20c815600a165627a7a723058203593bc57de48c93f711a712098152623ea6b986bec68cc543a05ba22a12cc26e0029",
     info: {
       abiDefinition: [{...}, {...}, {...}, {...}, {...}, {...}, {...}],
       compilerOptions: "--combined-json bin,abi,userdoc,devdoc --add-std --optimize",
@@ -46,14 +46,14 @@ undefined
       },
       language: "Solidity",
       languageVersion: "0.4.9",
-      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491834568; uint256 public constant DEPOSIT_DATE_TO = 1491834688; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
+      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491837452; uint256 public constant DEPOSIT_DATE_TO = 1491837572; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
       userDoc: {
         methods: {}
       }
     }
   },
   <stdin>:CustomerDeposit: {
-    code: "0x60606040526000600055341561001157fe5b60405160208061019483398101604052515b60018054600160a060020a031916600160a060020a0383161790555b505b610144806100506000396000f300606060405236156100305763ffffffff60e060020a600035041663c45a015581146100b5578063f6153ccd146100e1575b6100b35b60008054349081018255600154604080517f4578474d000000000000000000000000000000000000000000000000000000008152600160a060020a03338116600483015291519190921693634578474d93926024808201939182900301818588803b151561009e57fe5b61235a5a03f115156100ac57fe5b505050505b565b005b34156100bd57fe5b6100c5610103565b60408051600160a060020a039092168252519081900360200190f35b34156100e957fe5b6100f1610112565b60408051918252519081900360200190f35b600154600160a060020a031681565b600054815600a165627a7a72305820ac13c6303babbb291cb783ece65340706c88aac436a70544f47024a8ae5a86240029",
+    code: "0x60606040526000600055341561001157fe5b60405160208061019483398101604052515b60018054600160a060020a031916600160a060020a0383161790555b505b610144806100506000396000f300606060405236156100305763ffffffff60e060020a600035041663c45a015581146100b5578063f6153ccd146100e1575b6100b35b60008054349081018255600154604080517f4578474d000000000000000000000000000000000000000000000000000000008152600160a060020a03338116600483015291519190921693634578474d93926024808201939182900301818588803b151561009e57fe5b61235a5a03f115156100ac57fe5b505050505b565b005b34156100bd57fe5b6100c5610103565b60408051600160a060020a039092168252519081900360200190f35b34156100e957fe5b6100f1610112565b60408051918252519081900360200190f35b600154600160a060020a031681565b600054815600a165627a7a723058205a5645117014424f98c8296582caf9c2b3209c4af153628ad04f03f9b177f52c0029",
     info: {
       abiDefinition: [{...}, {...}, {...}, {...}],
       compilerOptions: "--combined-json bin,abi,userdoc,devdoc --add-std --optimize",
@@ -63,14 +63,14 @@ undefined
       },
       language: "Solidity",
       languageVersion: "0.4.9",
-      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491834568; uint256 public constant DEPOSIT_DATE_TO = 1491834688; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
+      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491837452; uint256 public constant DEPOSIT_DATE_TO = 1491837572; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
       userDoc: {
         methods: {}
       }
     }
   },
   <stdin>:CustomerDepositFactory: {
-    code: "0x606060405260018054600160a060020a0319167220017ba4c67f76c76b1af8c41821ee54f3717117905560006002556003805460ff191690555b60008054600160a060020a03191633600160a060020a03161790555b5b610998806100656000396000f300606060405236156100d55763ffffffff60e060020a600035041663056acde881146100ea578063158911481461010c5780632116da5b1461012157806327f2451f146101455780634578474d146101755780635e12e6be146100ea57806365e17c9d146101ad5780637d882097146101d95780637eb4fa73146101fb57806384f08c6b1461022a5780638da5cb5b14610241578063d22d4b411461026d578063db79b1fe1461028f578063dce6b447146102bb578063e70b5750146102dd578063f2fde38b14610309578063ff35470314610327575b34156100dd57fe5b6100e85b610000565b565b005b34156100f257fe5b6100fa610349565b60408051918252519081900360200190f35b341561011457fe5b6100e860043561034e565b005b341561012957fe5b610131610451565b604080519115158252519081900360200190f35b341561014d57fe5b610131600160a060020a036004351661045a565b604080519115158252519081900360200190f35b6100e8600160a060020a036004351661046f565b005b34156100f257fe5b6100fa610349565b60408051918252519081900360200190f35b34156101b557fe5b6101bd6105f8565b60408051600160a060020a039092168252519081900360200190f35b34156101e157fe5b6100fa61060f565b60408051918252519081900360200190f35b341561020357fe5b6101bd600435610615565b60408051600160a060020a039092168252519081900360200190f35b341561023257fe5b6100e86004351515610647565b005b341561024957fe5b6101bd6106b0565b60408051600160a060020a039092168252519081900360200190f35b341561027557fe5b6100fa6106bf565b60408051918252519081900360200190f35b341561029757fe5b6101bd6106c6565b60408051600160a060020a039092168252519081900360200190f35b34156102c357fe5b6100fa6106dd565b60408051918252519081900360200190f35b34156102e557fe5b6101bd6106e5565b60408051600160a060020a039092168252519081900360200190f35b341561031157fe5b6100e8600160a060020a03600435166106f4565b005b341561032f57fe5b6100fa610775565b60408051918252519081900360200190f35b600581565b60008054819033600160a060020a0390811691161461036c57610000565b600091505b8282101561044a573061038261077d565b600160a060020a03909116815260405190819003602001906000f08015156103a657fe5b9050600480548060010182816103bc919061078d565b916000526020600020900160005b8154600160a060020a038086166101009390930a83810291021990911617909155600081815260056020908152604091829020805460ff19166001179055600454825190815291519293507f17b39befb027a95f2f3423ca18f3d98ce369297f24316ebfd763c3b54398947792918290030190a25b600190910190610371565b5b5b505050565b60035460ff1681565b60056020526000908152604090205460ff1681565b6000600060006358eb96c842108061048a57506358eb974042115b1561049457610000565b600160a060020a03331660009081526005602052604090205460ff1615156104bb57610000565b60035460ff16156104cb57610000565b60028054349081019091556103e8906005025b600154604051929091049450600160a060020a03169084156108fc029085906000818181858888f19350505050151561051657610000565b6103e8346005025b60405191900492507236f6addb6d64684390f55a92f0f4988266901b9083156108fc029084906000818181858888f19350505050151561055d57610000565b506040513483900382900390724e64833635cd1056b948b57286b7c91e62731c9082156108fc029083906000818181858888f1935050505015156105a057610000565b33600160a060020a031684600160a060020a03167f54ef209e319f7d023f4f2c1d4b427c3844f7ef008d20a2104b1f20cb533a7fbf346040518082815260200191505060405180910390a35b5b50505050565b600581565b7236f6addb6d64684390f55a92f0f4988266901b81565b60025481565b600480548290811061062357fe5b906000526020600020900160005b915054906101000a9004600160a060020a031681565b60005433600160a060020a0390811691161461066257610000565b6003805460ff191682151517908190556040805160ff90921615158252517f128cd232a366068e71f466a5964eb7927d8feb552e077ff55849d447ebaf2392916020908290030190a15b5b50565b600054600160a060020a031681565b6004545b90565b724e64833635cd1056b948b57286b7c91e62731c81565b6358eb974081565b600154600160a060020a031681565b60005433600160a060020a0390811691161461070f57610000565b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b6358eb96c881565b604051610194806107d983390190565b81548183558181151161044a5760008381526020902061044a9181019083016107b7565b5b505050565b6106c391905b808211156107d157600081556001016107bd565b5090565b90560060606040526000600055341561001157fe5b60405160208061019483398101604052515b60018054600160a060020a031916600160a060020a0383161790555b505b610144806100506000396000f300606060405236156100305763ffffffff60e060020a600035041663c45a015581146100b5578063f6153ccd146100e1575b6100b35b60008054349081018255600154604080517f4578474d000000000000000000000000000000000000000000000000000000008152600160a060020a03338116600483015291519190921693634578474d93926024808201939182900301818588803b151561009e57fe5b61235a5a03f115156100ac57fe5b505050505b565b005b34156100bd57fe5b6100c5610103565b60408051600160a060020a039092168252519081900360200190f35b34156100e957fe5b6100f1610112565b60408051918252519081900360200190f35b600154600160a060020a031681565b600054815600a165627a7a72305820ac13c6303babbb291cb783ece65340706c88aac436a70544f47024a8ae5a86240029a165627a7a723058203e70bff7d285c49a4b600556eba50c12c5ea7011daad103d91d1635e67eec0690029",
+    code: "0x606060405260018054600160a060020a0319167220017ba4c67f76c76b1af8c41821ee54f3717117905560006002556003805460ff191690555b60008054600160a060020a03191633600160a060020a03161790555b5b610998806100656000396000f300606060405236156100d55763ffffffff60e060020a600035041663056acde881146100ea578063158911481461010c5780632116da5b1461012157806327f2451f146101455780634578474d146101755780635e12e6be146100ea57806365e17c9d146101ad5780637d882097146101d95780637eb4fa73146101fb57806384f08c6b1461022a5780638da5cb5b14610241578063d22d4b411461026d578063db79b1fe1461028f578063dce6b447146102bb578063e70b5750146102dd578063f2fde38b14610309578063ff35470314610327575b34156100dd57fe5b6100e85b610000565b565b005b34156100f257fe5b6100fa610349565b60408051918252519081900360200190f35b341561011457fe5b6100e860043561034e565b005b341561012957fe5b610131610451565b604080519115158252519081900360200190f35b341561014d57fe5b610131600160a060020a036004351661045a565b604080519115158252519081900360200190f35b6100e8600160a060020a036004351661046f565b005b34156100f257fe5b6100fa610349565b60408051918252519081900360200190f35b34156101b557fe5b6101bd6105f8565b60408051600160a060020a039092168252519081900360200190f35b34156101e157fe5b6100fa61060f565b60408051918252519081900360200190f35b341561020357fe5b6101bd600435610615565b60408051600160a060020a039092168252519081900360200190f35b341561023257fe5b6100e86004351515610647565b005b341561024957fe5b6101bd6106b0565b60408051600160a060020a039092168252519081900360200190f35b341561027557fe5b6100fa6106bf565b60408051918252519081900360200190f35b341561029757fe5b6101bd6106c6565b60408051600160a060020a039092168252519081900360200190f35b34156102c357fe5b6100fa6106dd565b60408051918252519081900360200190f35b34156102e557fe5b6101bd6106e5565b60408051600160a060020a039092168252519081900360200190f35b341561031157fe5b6100e8600160a060020a03600435166106f4565b005b341561032f57fe5b6100fa610775565b60408051918252519081900360200190f35b600581565b60008054819033600160a060020a0390811691161461036c57610000565b600091505b8282101561044a573061038261077d565b600160a060020a03909116815260405190819003602001906000f08015156103a657fe5b9050600480548060010182816103bc919061078d565b916000526020600020900160005b8154600160a060020a038086166101009390930a83810291021990911617909155600081815260056020908152604091829020805460ff19166001179055600454825190815291519293507f17b39befb027a95f2f3423ca18f3d98ce369297f24316ebfd763c3b54398947792918290030190a25b600190910190610371565b5b5b505050565b60035460ff1681565b60056020526000908152604090205460ff1681565b6000600060006358eba20c42108061048a57506358eba28442115b1561049457610000565b600160a060020a03331660009081526005602052604090205460ff1615156104bb57610000565b60035460ff16156104cb57610000565b60028054349081019091556103e8906005025b600154604051929091049450600160a060020a03169084156108fc029085906000818181858888f19350505050151561051657610000565b6103e8346005025b60405191900492507236f6addb6d64684390f55a92f0f4988266901b9083156108fc029084906000818181858888f19350505050151561055d57610000565b506040513483900382900390724e64833635cd1056b948b57286b7c91e62731c9082156108fc029083906000818181858888f1935050505015156105a057610000565b33600160a060020a031684600160a060020a03167f54ef209e319f7d023f4f2c1d4b427c3844f7ef008d20a2104b1f20cb533a7fbf346040518082815260200191505060405180910390a35b5b50505050565b600581565b7236f6addb6d64684390f55a92f0f4988266901b81565b60025481565b600480548290811061062357fe5b906000526020600020900160005b915054906101000a9004600160a060020a031681565b60005433600160a060020a0390811691161461066257610000565b6003805460ff191682151517908190556040805160ff90921615158252517f128cd232a366068e71f466a5964eb7927d8feb552e077ff55849d447ebaf2392916020908290030190a15b5b50565b600054600160a060020a031681565b6004545b90565b724e64833635cd1056b948b57286b7c91e62731c81565b6358eba28481565b600154600160a060020a031681565b60005433600160a060020a0390811691161461070f57610000565b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b6358eba20c81565b604051610194806107d983390190565b81548183558181151161044a5760008381526020902061044a9181019083016107b7565b5b505050565b6106c391905b808211156107d157600081556001016107bd565b5090565b90560060606040526000600055341561001157fe5b60405160208061019483398101604052515b60018054600160a060020a031916600160a060020a0383161790555b505b610144806100506000396000f300606060405236156100305763ffffffff60e060020a600035041663c45a015581146100b5578063f6153ccd146100e1575b6100b35b60008054349081018255600154604080517f4578474d000000000000000000000000000000000000000000000000000000008152600160a060020a03338116600483015291519190921693634578474d93926024808201939182900301818588803b151561009e57fe5b61235a5a03f115156100ac57fe5b505050505b565b005b34156100bd57fe5b6100c5610103565b60408051600160a060020a039092168252519081900360200190f35b34156100e957fe5b6100f1610112565b60408051918252519081900360200190f35b600154600160a060020a031681565b600054815600a165627a7a723058205a5645117014424f98c8296582caf9c2b3209c4af153628ad04f03f9b177f52c0029a165627a7a72305820ecb3ae908f478419d48f06072198028e7cd1eebbdaa2ca9193b9d5c27c23c9780029",
     info: {
       abiDefinition: [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}],
       compilerOptions: "--combined-json bin,abi,userdoc,devdoc --add-std --optimize",
@@ -80,14 +80,14 @@ undefined
       },
       language: "Solidity",
       languageVersion: "0.4.9",
-      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491834568; uint256 public constant DEPOSIT_DATE_TO = 1491834688; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
+      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491837452; uint256 public constant DEPOSIT_DATE_TO = 1491837572; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
       userDoc: {
         methods: {}
       }
     }
   },
   <stdin>:Owned: {
-    code: "0x6060604052341561000c57fe5b5b60008054600160a060020a03191633600160a060020a03161790555b5b610128806100396000396000f300606060405263ffffffff60e060020a6000350416638da5cb5b8114602a578063f2fde38b146053575bfe5b3415603157fe5b6037606e565b60408051600160a060020a039092168252519081900360200190f35b3415605a57fe5b606c600160a060020a0360043516607d565b005b600054600160a060020a031681565b60005433600160a060020a039081169116146096576000565b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b505600a165627a7a72305820a62f2b57dd532ed594f7ab3ddb293422e74d8e85d0aa479f68919fb0113523af0029",
+    code: "0x6060604052341561000c57fe5b5b60008054600160a060020a03191633600160a060020a03161790555b5b610128806100396000396000f300606060405263ffffffff60e060020a6000350416638da5cb5b8114602a578063f2fde38b146053575bfe5b3415603157fe5b6037606e565b60408051600160a060020a039092168252519081900360200190f35b3415605a57fe5b606c600160a060020a0360043516607d565b005b600054600160a060020a031681565b60005433600160a060020a039081169116146096576000565b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b505600a165627a7a723058209c63a097e9d6da2530b14ec31aa918a613d79a915b2a03e380b3ea6ff85836d10029",
     info: {
       abiDefinition: [{...}, {...}, {...}, {...}],
       compilerOptions: "--combined-json bin,abi,userdoc,devdoc --add-std --optimize",
@@ -97,7 +97,7 @@ undefined
       },
       language: "Solidity",
       languageVersion: "0.4.9",
-      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491834568; uint256 public constant DEPOSIT_DATE_TO = 1491834688; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
+      source: "pragma solidity ^0.4.8;contract Config { uint256 public constant DEPOSIT_DATE_FROM = 1491837452; uint256 public constant DEPOSIT_DATE_TO = 1491837572; uint256 public constant INCENT_RATE_PER_THOUSAND = 5; address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171; uint256 public constant FEE_RATE_PER_THOUSAND = 5; address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b; address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;}contract Owned { address public owner; event OwnershipTransferred(address indexed _from, address indexed _to); function Owned() { owner = msg.sender; } modifier onlyOwner { if (msg.sender != owner) throw; _; } function transferOwnership(address newOwner) onlyOwner { OwnershipTransferred(owner, newOwner); owner = newOwner; }}contract CustomerDeposit { uint256 public totalDeposit = 0; CustomerDepositFactory public factory; function CustomerDeposit(CustomerDepositFactory _factory) { factory = _factory; } function () payable { totalDeposit += msg.value; factory.receiveDeposit.value(msg.value)(msg.sender); }}contract CustomerDepositFactory is Owned, Config { uint256 public totalDeposits = 0; bool public fundingClosed = false; CustomerDeposit[] public depositContracts; mapping (address => bool) public isDepositContract; modifier fundingPeriodActive() { if (now < DEPOSIT_DATE_FROM || now > DEPOSIT_DATE_TO) throw; _; } event DepositContractCreated(address indexed depositContract, uint256 number); event DepositReceived(address indexed depositOrigin, address indexed depositContract, uint _value); event FundingClosed(bool fundingClosed); function createDepositContracts(uint256 number) onlyOwner { for (uint256 i = 0; i < number; i++) { CustomerDeposit customerDeposit = new CustomerDeposit(this); depositContracts.push(customerDeposit); isDepositContract[customerDeposit] = true; DepositContractCreated(customerDeposit, depositContracts.length); } } function numberOfDepositContracts() constant returns (uint) { return depositContracts.length; } function receiveDeposit(address depositOrigin) fundingPeriodActive payable { if (!isDepositContract[msg.sender]) throw; if (fundingClosed) throw; totalDeposits += msg.value; uint256 value1 = msg.value * INCENT_RATE_PER_THOUSAND / 1000; if (!incentAccount.send(value1)) throw; uint256 value2 = msg.value * FEE_RATE_PER_THOUSAND / 1000; if (!feeAccount.send(value2)) throw; uint256 value3 = msg.value - value1 - value2; if (!clientAccount.send(value3)) throw; DepositReceived(depositOrigin, msg.sender, msg.value); } function setFundingClosed(bool _fundingClosed) onlyOwner { fundingClosed = _fundingClosed; FundingClosed(fundingClosed); } function () { throw; }}",
       userDoc: {
         methods: {}
       }
@@ -138,16 +138,16 @@ undefined
 ......... 
 ...... 
 ... 
-depositContractFactoryTx=0x4a71e31e232306ccc3d16b2d0a187c09d15508ac3f211e4ac933562716791cf5
+depositContractFactoryTx=0x29aac4beb1ac4a942dcee1ea43dca889e7cebbc7d98607f0a61df57d43c6eb4c
 undefined
 > 
 ... 
 undefined
 > 
-RESULT: depositContractFactoryAddress=0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95 gas=4000000 gasUsed=760573 cost=0.016403106033446066 block=3 txId=0x4a71e31e232306ccc3d16b2d0a187c09d15508ac3f211e4ac933562716791cf5
+RESULT: depositContractFactoryAddress=0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95 gas=4000000 gasUsed=760573 cost=0.016080417585269488 block=5 txId=0x29aac4beb1ac4a942dcee1ea43dca889e7cebbc7d98607f0a61df57d43c6eb4c
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100015.016403106033446066 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.983596893966553934 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100025.016080417585269488 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.983919582414730512 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100000.000000000000000000 Account #4 - Client Account
@@ -156,8 +156,8 @@ RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552   100000.000000000000000000
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
 > 
-RESULT: contract.depositDateFrom=1491834568 Tue, 11 Apr 2017 00:29:28 AEST
-RESULT: contract.depositDateTo=1491834688 Tue, 11 Apr 2017 00:31:28 AEST
+RESULT: contract.depositDateFrom=1491837452 Tue, 11 Apr 2017 01:17:32 AEST
+RESULT: contract.depositDateTo=1491837572 Tue, 11 Apr 2017 01:19:32 AEST
 RESULT: contract.incentRatePerThousand=5
 RESULT: contract.incentAccount=0x0020017ba4c67f76c76b1af8c41821ee54f37171
 RESULT: contract.feeRatePerThousand=5
@@ -187,8 +187,8 @@ undefined
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100025.020766876544316754 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.979233123455683246 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100035.020354670632564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.979645329367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100000.000000000000000000 Account #4 - Client Account
@@ -200,10 +200,10 @@ undefined
 RESULT: contract.numberOfDepositContracts=1
 RESULT: contract.depositContracts(0) 0x59da4a4d09575d187478f468ffda04fc1e8675aa
 RESULT: contract.totalDeposits=0
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
 undefined
 > 
-RESULT: create12Tx gas=4500000 gasUsed=206398 cost=0.004363770510870688 block=5 txId=0x2dd22924fb7307103363bb044a2f147006f75bb14f65648a71bd93f8bb6c9f3f
+RESULT: tx12 gas=4500000 gasUsed=206398 cost=0.004274253047294776 block=7 txId=0x016bfaac91de5e01716daf33ec791d955d43cb764dff885faa85204d6599c132
 undefined
 > 
 RESULT: PASS Test 1.2 Create 1 Deposit Contract
@@ -226,17 +226,17 @@ undefined
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100035.029050392949116754 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.979233123455683246 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100045.028479660186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.979645329367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100000.000000000000000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991716483595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991875010446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552   100000.000000000000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
 > 
-RESULT: customerDeposit13Tx gas=400000 gasUsed=400000 cost=0.0082835164048 block=7 txId=0xf6bb1e45e377caa747b50418428d851c1cb11dffb2a94719597be944994defb1
+RESULT: tx13 gas=400000 gasUsed=400000 cost=0.008124989554 block=9 txId=0x1a1267d429689d6086dc0a41d701a4636e576811b5d9d6a6ef3071b1307ba73a
 undefined
 > 
 RESULT: PASS Test 1.3 Contribute before contribution period is active - unsuccessful
@@ -256,16 +256,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: create14Tx gas=4500000 gasUsed=1717330 cost=0.03488322077692705 block=9 txId=0x1a7277a53fb520ceed33448b1bfc59a0b6a39af7250415f44866f14cf04b06cc
+RESULT: tx14 gas=4500000 gasUsed=1717330 cost=0.0343466 block=11 txId=0xa963e7556e522dfc21cf83d4041f761a5adf99b712c36e36770607ef4f59b0ff
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100045.063933613726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.944349902678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100055.062826260186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.945298729367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100000.000000000000000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991716483595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991875010446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552   100000.000000000000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -283,17 +283,17 @@ RESULT: contract.depositContracts(8) 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758
 RESULT: contract.depositContracts(9) 0x8639515c6d998ea54bb8ae24b95d649f78f42b18
 RESULT: contract.depositContracts(10) 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8
 RESULT: contract.totalDeposits=0
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
 undefined
 > 
 RESULT: PASS Test 1.4 Create 10 Deposit Contracts
@@ -313,16 +313,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: create15Tx gas=4500000 gasUsed=3412810 cost=0.0682562 block=11 txId=0x8f4e80bf3a9875d54ba4058a2764f4e3cd789ff29f2b77b572f84585cdcf4942
+RESULT: tx15 gas=4500000 gasUsed=3412810 cost=0.0682562 block=13 txId=0x8f4e80bf3a9875d54ba4058a2764f4e3cd789ff29f2b77b572f84585cdcf4942
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100055.132189813726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876093702678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100065.131082460186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.877042529367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.000000000000000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.000000000000000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100000.000000000000000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991716483595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99999.991875010446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552   100000.000000000000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -360,37 +360,37 @@ RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
 RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
 RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
 RESULT: contract.totalDeposits=0
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
-RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 11
-RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 11
-RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 11
-RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 11
-RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 11
-RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 11
-RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 11
-RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 11
-RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 11
-RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 11
-RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 11
-RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 11
-RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 11
-RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 11
-RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 11
-RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 11
-RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 11
-RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 11
-RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 11
-RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 11
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
 undefined
 > 
 RESULT: PASS Test 1.5 Create 20 Deposit Contracts
@@ -411,14 +411,14 @@ undefined
 undefined
 > 
 ... 
-RESULT: Waiting until deposit period is active at 1491834568 Tue, 11 Apr 2017 00:29:28 AEST currentDate=Tue, 11 Apr 2017 00:29:29 AEST
+RESULT: Waiting until deposit period is active at 1491837452 Tue, 11 Apr 2017 01:17:32 AEST currentDate=Tue, 11 Apr 2017 01:17:41 AEST
 undefined
 > 
 ... 
 undefined
 > 
 ... 
-RESULT: Waited until deposit period is active at 1491834568 Tue, 11 Apr 2017 00:29:28 AEST currentDate=Tue, 11 Apr 2017 00:29:29 AEST
+RESULT: Waited until deposit period is active at 1491837452 Tue, 11 Apr 2017 01:17:32 AEST currentDate=Tue, 11 Apr 2017 01:17:41 AEST
 undefined
 > 
 > 
@@ -429,16 +429,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: customerDeposit16Tx gas=400000 gasUsed=91338 cost=0.00182676 block=14 txId=0x74e2f1c380e1b4f02835bd69c33062a077d44c19f967588b8363e7a2ebdd6eae
+RESULT: tx16 gas=400000 gasUsed=91338 cost=0.00182676 block=16 txId=0x74e2f1c380e1b4f02835bd69c33062a077d44c19f967588b8363e7a2ebdd6eae
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100070.134016573726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876093702678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100080.132909220186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.877042529367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100000.051172839450000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100000.051172839450000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   100010.132222211100000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755321833595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552   100000.000000000000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -476,38 +476,38 @@ RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
 RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
 RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
 RESULT: contract.totalDeposits=10.23456789
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
-RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 11
-RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 11
-RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 11
-RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 11
-RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 11
-RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 11
-RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 11
-RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 11
-RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 11
-RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 11
-RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 11
-RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 11
-RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 11
-RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 11
-RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 11
-RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 11
-RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 11
-RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 11
-RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 11
-RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 11
-RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 14
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
 undefined
 > 
 RESULT: PASS Test 1.6 Customer1 Deposit 10.23456789 ETH
@@ -532,16 +532,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: customerDeposit17Tx gas=400000 gasUsed=76338 cost=0.00152676 block=16 txId=0x5b95b28b1bda6aa2730cf9c31cc55cae0f97bf8eb207e1e3d813c6f7219ab640
+RESULT: tx17 gas=400000 gasUsed=76338 cost=0.00152676 block=18 txId=0x5b95b28b1bda6aa2730cf9c31cc55cae0f97bf8eb207e1e3d813c6f7219ab640
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100080.135543333726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876093702678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100090.134435980186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.877042529367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.051172839450000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.051172839450000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101000.132222211100000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755321833595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98999.998473240000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -579,39 +579,39 @@ RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
 RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
 RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
 RESULT: contract.totalDeposits=1010.23456789
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
-RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 11
-RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 11
-RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 11
-RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 11
-RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 11
-RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 11
-RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 11
-RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 11
-RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 11
-RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 11
-RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 11
-RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 11
-RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 11
-RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 11
-RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 11
-RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 11
-RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 11
-RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 11
-RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 11
-RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 11
-RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 14
-RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 16
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
 undefined
 > 
 RESULT: PASS Test 1.7 Customer2 Deposit 1000 ETH
@@ -636,16 +636,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: customerDeposit18Tx gas=50000 gasUsed=50000 cost=0.001 block=18 txId=0x96cc7dc260d25d650c7d75c68563dc75bd0d4e93d9fd258cf1e515282266c124
+RESULT: tx18 gas=50000 gasUsed=50000 cost=0.001 block=20 txId=0x96cc7dc260d25d650c7d75c68563dc75bd0d4e93d9fd258cf1e515282266c124
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100090.136543333726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876093702678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100100.135435980186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.877042529367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.051172839450000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.051172839450000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101000.132222211100000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755321833595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98999.997473240000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -683,39 +683,39 @@ RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
 RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
 RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
 RESULT: contract.totalDeposits=1010.23456789
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
-RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 11
-RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 11
-RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 11
-RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 11
-RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 11
-RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 11
-RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 11
-RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 11
-RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 11
-RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 11
-RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 11
-RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 11
-RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 11
-RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 11
-RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 11
-RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 11
-RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 11
-RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 11
-RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 11
-RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 11
-RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 14
-RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 16
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
 undefined
 > 
 RESULT: PASS Test 1.8 Customer2 Deposit 100 ETH with too little gas - unsuccessful
@@ -728,28 +728,9 @@ undefined
 > 
 undefined
 > 
-"Test 1.9 Customer1 Deposit 100 ETH after end - unsuccessful"
+"Test 1.9 Close funding"
 > 
-RESULT: Test 1.9 Customer1 Deposit 100 ETH after end - unsuccessful
-undefined
-> 
-> 
-undefined
-> 
-undefined
-> 
-... 
-RESULT: Waiting until deposit period is inactive at 1491834688 Tue, 11 Apr 2017 00:31:28 AEST currentDate=Tue, 11 Apr 2017 00:30:04 AEST
-undefined
-> 
-... 
-undefined
-> 
-... 
-RESULT: Waited until deposit period is inactive at 1491834688 Tue, 11 Apr 2017 00:31:28 AEST currentDate=Tue, 11 Apr 2017 00:31:28 AEST
-undefined
-> 
-> 
+RESULT: Test 1.9 Close funding
 undefined
 > 
 undefined
@@ -757,16 +738,16 @@ undefined
 ... 
 undefined
 > 
-RESULT: customerDeposit19Tx gas=400000 gasUsed=400000 cost=0.008 block=48 txId=0x426e9407e3e723d89cfa518b37daa955de4a02d84ddfb000edd79d8fed686366
+RESULT: tx19 gas=400000 gasUsed=43100 cost=0.000862 block=23 txId=0xea7f42f4868dd578e1920db96d4a9a97ad0a95ba0afa8e1bd2117ebabb8e8b9a
 undefined
 > 
 RESULT: # Account                                                   EtherBalance Name
-RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100240.144543333726043804 Account #0 - Miner
-RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876093702678756196 Account #1 - CustomerDepositFactory Owner
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100115.136297980186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876180529367435736 Account #1 - CustomerDepositFactory Owner
 RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.051172839450000000 Account #2 - Incent Account
 RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.051172839450000000 Account #3 - Fee Account
 RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101000.132222211100000000 Account #4 - Client Account
-RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.747321833595200000 Account #5 - Customer1 Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
 RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98999.997473240000000000 Account #6 - Customer2 Account
 RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
 undefined
@@ -804,42 +785,466 @@ RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
 RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
 RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
 RESULT: contract.totalDeposits=1010.23456789
-RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 5
-RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 9
-RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 9
-RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 9
-RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 9
-RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 9
-RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 9
-RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 9
-RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 9
-RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 9
-RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 9
-RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 11
-RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 11
-RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 11
-RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 11
-RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 11
-RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 11
-RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 11
-RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 11
-RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 11
-RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 11
-RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 11
-RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 11
-RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 11
-RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 11
-RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 11
-RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 11
-RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 11
-RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 11
-RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 11
-RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 11
-RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 14
-RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 16
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
 undefined
 > 
-RESULT: PASS Test 1.9 Customer1 Deposit 100 ETH after end - unsuccessful
+RESULT: PASS Test 1.9 Close funding
+1
+> 
+> 
+> 
+undefined
+> 
+"Test 1.10 Contribute when funding is closed - unsuccessful"
+> 
+RESULT: Test 1.10 Contribute when funding is closed - unsuccessful
+undefined
+> 
+undefined
+> 
+undefined
+> 
+... 
+undefined
+> 
+RESULT: tx110 gas=400000 gasUsed=400000 cost=0.008 block=25 txId=0x993e903a3b262adca37087e196dcca70f91065470d6a3cc5f26381140e1d55dc
+undefined
+> 
+RESULT: # Account                                                   EtherBalance Name
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100125.144297980186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.876180529367435736 Account #1 - CustomerDepositFactory Owner
+RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.051172839450000000 Account #2 - Incent Account
+RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.051172839450000000 Account #3 - Fee Account
+RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101000.132222211100000000 Account #4 - Client Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
+RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98999.989473240000000000 Account #6 - Customer2 Account
+RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
+undefined
+> 
+RESULT: contract.numberOfDepositContracts=31
+RESULT: contract.depositContracts(0) 0x59da4a4d09575d187478f468ffda04fc1e8675aa
+RESULT: contract.depositContracts(1) 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10
+RESULT: contract.depositContracts(2) 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a
+RESULT: contract.depositContracts(3) 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139
+RESULT: contract.depositContracts(4) 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac
+RESULT: contract.depositContracts(5) 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20
+RESULT: contract.depositContracts(6) 0xf2506a5fc5d5f1ee3cd01903c146752b54450848
+RESULT: contract.depositContracts(7) 0x98eb745c11105445b55a099ccbc93d91a17e69b2
+RESULT: contract.depositContracts(8) 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758
+RESULT: contract.depositContracts(9) 0x8639515c6d998ea54bb8ae24b95d649f78f42b18
+RESULT: contract.depositContracts(10) 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8
+RESULT: contract.depositContracts(11) 0x12afed2b05e06ffa51d863a1672fa61df5163103
+RESULT: contract.depositContracts(12) 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79
+RESULT: contract.depositContracts(13) 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547
+RESULT: contract.depositContracts(14) 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3
+RESULT: contract.depositContracts(15) 0x9719c99645aa7953397f247b933d5831249e4b14
+RESULT: contract.depositContracts(16) 0xf901d796b07b47b6a0248c869e9904c3f792dd03
+RESULT: contract.depositContracts(17) 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee
+RESULT: contract.depositContracts(18) 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa
+RESULT: contract.depositContracts(19) 0x190adee97706cd73834193e590c61829bbf92b6b
+RESULT: contract.depositContracts(20) 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8
+RESULT: contract.depositContracts(21) 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e
+RESULT: contract.depositContracts(22) 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b
+RESULT: contract.depositContracts(23) 0x18e9d325b78e6e18311074ebbfb30347e7c2169a
+RESULT: contract.depositContracts(24) 0xde728f2aa4c40430eebec1e8383a6bf981153547
+RESULT: contract.depositContracts(25) 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d
+RESULT: contract.depositContracts(26) 0xfbff59478fe72d6e38f8c75db631702649a898ed
+RESULT: contract.depositContracts(27) 0xaba647d610a7036aeb1682819a4a201f1407fa62
+RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
+RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
+RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
+RESULT: contract.totalDeposits=1010.23456789
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
+undefined
+> 
+RESULT: PASS Test 1.10 Contribute when funding is closed - unsuccessful
+1
+> 
+RESULT:   CHECK 1. There should be no payments
+undefined
+> 
+> 
+> 
+undefined
+> 
+"Test 1.11 Reopen funding"
+> 
+RESULT: Test 1.11 Reopen funding
+undefined
+> 
+undefined
+> 
+... 
+undefined
+> 
+RESULT: tx111 gas=400000 gasUsed=14018 cost=0.00028036 block=28 txId=0x780b519d25e1c431a0f7bd9c9740c7af97e0bbada0243b54ea810e85471f54bc
+undefined
+> 
+RESULT: # Account                                                   EtherBalance Name
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100140.144578340186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.875900169367435736 Account #1 - CustomerDepositFactory Owner
+RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.051172839450000000 Account #2 - Incent Account
+RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.051172839450000000 Account #3 - Fee Account
+RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101000.132222211100000000 Account #4 - Client Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
+RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98999.989473240000000000 Account #6 - Customer2 Account
+RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
+undefined
+> 
+RESULT: contract.numberOfDepositContracts=31
+RESULT: contract.depositContracts(0) 0x59da4a4d09575d187478f468ffda04fc1e8675aa
+RESULT: contract.depositContracts(1) 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10
+RESULT: contract.depositContracts(2) 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a
+RESULT: contract.depositContracts(3) 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139
+RESULT: contract.depositContracts(4) 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac
+RESULT: contract.depositContracts(5) 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20
+RESULT: contract.depositContracts(6) 0xf2506a5fc5d5f1ee3cd01903c146752b54450848
+RESULT: contract.depositContracts(7) 0x98eb745c11105445b55a099ccbc93d91a17e69b2
+RESULT: contract.depositContracts(8) 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758
+RESULT: contract.depositContracts(9) 0x8639515c6d998ea54bb8ae24b95d649f78f42b18
+RESULT: contract.depositContracts(10) 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8
+RESULT: contract.depositContracts(11) 0x12afed2b05e06ffa51d863a1672fa61df5163103
+RESULT: contract.depositContracts(12) 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79
+RESULT: contract.depositContracts(13) 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547
+RESULT: contract.depositContracts(14) 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3
+RESULT: contract.depositContracts(15) 0x9719c99645aa7953397f247b933d5831249e4b14
+RESULT: contract.depositContracts(16) 0xf901d796b07b47b6a0248c869e9904c3f792dd03
+RESULT: contract.depositContracts(17) 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee
+RESULT: contract.depositContracts(18) 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa
+RESULT: contract.depositContracts(19) 0x190adee97706cd73834193e590c61829bbf92b6b
+RESULT: contract.depositContracts(20) 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8
+RESULT: contract.depositContracts(21) 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e
+RESULT: contract.depositContracts(22) 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b
+RESULT: contract.depositContracts(23) 0x18e9d325b78e6e18311074ebbfb30347e7c2169a
+RESULT: contract.depositContracts(24) 0xde728f2aa4c40430eebec1e8383a6bf981153547
+RESULT: contract.depositContracts(25) 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d
+RESULT: contract.depositContracts(26) 0xfbff59478fe72d6e38f8c75db631702649a898ed
+RESULT: contract.depositContracts(27) 0xaba647d610a7036aeb1682819a4a201f1407fa62
+RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
+RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
+RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
+RESULT: contract.totalDeposits=1010.23456789
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
+undefined
+> 
+RESULT: PASS Test 1.11 Reopen funding
+1
+> 
+> 
+> 
+undefined
+> 
+"Test 1.12 Contribute when funding is re-opened"
+> 
+RESULT: Test 1.12 Contribute when funding is re-opened
+undefined
+> 
+undefined
+> 
+undefined
+> 
+... 
+undefined
+> 
+RESULT: tx111 gas=400000 gasUsed=61338 cost=0.00122676 block=32 txId=0xe9c96341d0a37deba6982c15922fd61fbf1f69bdb80b756a1015f6af0222095a
+undefined
+> 
+RESULT: # Account                                                   EtherBalance Name
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100160.145805100186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.875900169367435736 Account #1 - CustomerDepositFactory Owner
+RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.551172839450000000 Account #2 - Incent Account
+RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.551172839450000000 Account #3 - Fee Account
+RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101099.132222211100000000 Account #4 - Client Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.755480360446000000 Account #5 - Customer1 Account
+RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98899.988246480000000000 Account #6 - Customer2 Account
+RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
+undefined
+> 
+RESULT: contract.numberOfDepositContracts=31
+RESULT: contract.depositContracts(0) 0x59da4a4d09575d187478f468ffda04fc1e8675aa
+RESULT: contract.depositContracts(1) 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10
+RESULT: contract.depositContracts(2) 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a
+RESULT: contract.depositContracts(3) 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139
+RESULT: contract.depositContracts(4) 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac
+RESULT: contract.depositContracts(5) 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20
+RESULT: contract.depositContracts(6) 0xf2506a5fc5d5f1ee3cd01903c146752b54450848
+RESULT: contract.depositContracts(7) 0x98eb745c11105445b55a099ccbc93d91a17e69b2
+RESULT: contract.depositContracts(8) 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758
+RESULT: contract.depositContracts(9) 0x8639515c6d998ea54bb8ae24b95d649f78f42b18
+RESULT: contract.depositContracts(10) 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8
+RESULT: contract.depositContracts(11) 0x12afed2b05e06ffa51d863a1672fa61df5163103
+RESULT: contract.depositContracts(12) 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79
+RESULT: contract.depositContracts(13) 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547
+RESULT: contract.depositContracts(14) 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3
+RESULT: contract.depositContracts(15) 0x9719c99645aa7953397f247b933d5831249e4b14
+RESULT: contract.depositContracts(16) 0xf901d796b07b47b6a0248c869e9904c3f792dd03
+RESULT: contract.depositContracts(17) 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee
+RESULT: contract.depositContracts(18) 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa
+RESULT: contract.depositContracts(19) 0x190adee97706cd73834193e590c61829bbf92b6b
+RESULT: contract.depositContracts(20) 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8
+RESULT: contract.depositContracts(21) 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e
+RESULT: contract.depositContracts(22) 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b
+RESULT: contract.depositContracts(23) 0x18e9d325b78e6e18311074ebbfb30347e7c2169a
+RESULT: contract.depositContracts(24) 0xde728f2aa4c40430eebec1e8383a6bf981153547
+RESULT: contract.depositContracts(25) 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d
+RESULT: contract.depositContracts(26) 0xfbff59478fe72d6e38f8c75db631702649a898ed
+RESULT: contract.depositContracts(27) 0xaba647d610a7036aeb1682819a4a201f1407fa62
+RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
+RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
+RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
+RESULT: contract.totalDeposits=1110.23456789
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
+RESULT: DepositReceived Event 2: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 100 ETH block 32
+undefined
+> 
+RESULT: PASS Test 1.12 Contribute when funding is re-opened
+1
+> 
+> 
+> 
+undefined
+> 
+"Test 2.0 Customer1 Deposit 100 ETH after end - unsuccessful"
+> 
+RESULT: Test 2.0 Customer1 Deposit 100 ETH after end - unsuccessful
+undefined
+> 
+> 
+undefined
+> 
+undefined
+> 
+... 
+RESULT: Waiting until deposit period is inactive at 1491837572 Tue, 11 Apr 2017 01:19:32 AEST currentDate=Tue, 11 Apr 2017 01:18:58 AEST
+undefined
+> 
+... 
+undefined
+> 
+... 
+RESULT: Waited until deposit period is inactive at 1491837572 Tue, 11 Apr 2017 01:19:32 AEST currentDate=Tue, 11 Apr 2017 01:19:32 AEST
+undefined
+> 
+> 
+undefined
+> 
+undefined
+> 
+... 
+undefined
+> 
+RESULT: tx20 gas=400000 gasUsed=400000 cost=0.008 block=42 txId=0x426e9407e3e723d89cfa518b37daa955de4a02d84ddfb000edd79d8fed686366
+undefined
+> 
+RESULT: # Account                                                   EtherBalance Name
+RESULT: 1 0x000d1009bd8f0b1301cc5edc28ed1222a3ce671e   100210.153805100186564264 Account #0 - Miner
+RESULT: 2 0x0014060ff383c9b21c6840a3b14aab06741e5c49    99999.875900169367435736 Account #1 - CustomerDepositFactory Owner
+RESULT: 3 0x0020017ba4c67f76c76b1af8c41821ee54f37171   100005.551172839450000000 Account #2 - Incent Account
+RESULT: 4 0x0036f6addb6d64684390f55a92f0f4988266901b   100005.551172839450000000 Account #3 - Fee Account
+RESULT: 5 0x004e64833635cd1056b948b57286b7c91e62731c   101099.132222211100000000 Account #4 - Client Account
+RESULT: 6 0x0055fbc1ada89056088c75eaf50400af6756ae61    99989.747480360446000000 Account #5 - Customer1 Account
+RESULT: 7 0x006b2baf3000413d83d257086fd3434a109aa552    98899.988246480000000000 Account #6 - Customer2 Account
+RESULT: 8 0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95        0.000000000000000000 Customer Deposit Factory
+undefined
+> 
+RESULT: contract.numberOfDepositContracts=31
+RESULT: contract.depositContracts(0) 0x59da4a4d09575d187478f468ffda04fc1e8675aa
+RESULT: contract.depositContracts(1) 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10
+RESULT: contract.depositContracts(2) 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a
+RESULT: contract.depositContracts(3) 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139
+RESULT: contract.depositContracts(4) 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac
+RESULT: contract.depositContracts(5) 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20
+RESULT: contract.depositContracts(6) 0xf2506a5fc5d5f1ee3cd01903c146752b54450848
+RESULT: contract.depositContracts(7) 0x98eb745c11105445b55a099ccbc93d91a17e69b2
+RESULT: contract.depositContracts(8) 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758
+RESULT: contract.depositContracts(9) 0x8639515c6d998ea54bb8ae24b95d649f78f42b18
+RESULT: contract.depositContracts(10) 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8
+RESULT: contract.depositContracts(11) 0x12afed2b05e06ffa51d863a1672fa61df5163103
+RESULT: contract.depositContracts(12) 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79
+RESULT: contract.depositContracts(13) 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547
+RESULT: contract.depositContracts(14) 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3
+RESULT: contract.depositContracts(15) 0x9719c99645aa7953397f247b933d5831249e4b14
+RESULT: contract.depositContracts(16) 0xf901d796b07b47b6a0248c869e9904c3f792dd03
+RESULT: contract.depositContracts(17) 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee
+RESULT: contract.depositContracts(18) 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa
+RESULT: contract.depositContracts(19) 0x190adee97706cd73834193e590c61829bbf92b6b
+RESULT: contract.depositContracts(20) 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8
+RESULT: contract.depositContracts(21) 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e
+RESULT: contract.depositContracts(22) 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b
+RESULT: contract.depositContracts(23) 0x18e9d325b78e6e18311074ebbfb30347e7c2169a
+RESULT: contract.depositContracts(24) 0xde728f2aa4c40430eebec1e8383a6bf981153547
+RESULT: contract.depositContracts(25) 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d
+RESULT: contract.depositContracts(26) 0xfbff59478fe72d6e38f8c75db631702649a898ed
+RESULT: contract.depositContracts(27) 0xaba647d610a7036aeb1682819a4a201f1407fa62
+RESULT: contract.depositContracts(28) 0xf57fe0a273febf54d312c309d4cbbab0e740ae18
+RESULT: contract.depositContracts(29) 0xa0a55984de224d9638cd6df4e4779504adab6ce5
+RESULT: contract.depositContracts(30) 0x005f01e2ae60a9b788baba63a17012047e20b886
+RESULT: contract.totalDeposits=1110.23456789
+RESULT: DepositContractCreated Event 0: 0x59da4a4d09575d187478f468ffda04fc1e8675aa 1 block 7
+RESULT: DepositContractCreated Event 1: 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 2 block 11
+RESULT: DepositContractCreated Event 2: 0x7b60bd2ffe8f3e3af7c8d496982c7e8cc05ec47a 3 block 11
+RESULT: DepositContractCreated Event 3: 0x6fdc7243d2f8e32a99184fba3e233f0ee9d31139 4 block 11
+RESULT: DepositContractCreated Event 4: 0x01ce50cf23d9e9efdc2fce346e00b89c66bae9ac 5 block 11
+RESULT: DepositContractCreated Event 5: 0xc45a9a76356b2f4a2cf39095a9684bd8d6546b20 6 block 11
+RESULT: DepositContractCreated Event 6: 0xf2506a5fc5d5f1ee3cd01903c146752b54450848 7 block 11
+RESULT: DepositContractCreated Event 7: 0x98eb745c11105445b55a099ccbc93d91a17e69b2 8 block 11
+RESULT: DepositContractCreated Event 8: 0xb1d72f06f5e5b49aed08b2753a278c80ce5d2758 9 block 11
+RESULT: DepositContractCreated Event 9: 0x8639515c6d998ea54bb8ae24b95d649f78f42b18 10 block 11
+RESULT: DepositContractCreated Event 10: 0xf6f3d14dbc22334d09c3000d8863b4611a978cb8 11 block 11
+RESULT: DepositContractCreated Event 11: 0x12afed2b05e06ffa51d863a1672fa61df5163103 12 block 13
+RESULT: DepositContractCreated Event 12: 0x3ecde2fc801de3c4e41102b5dca0e2808f065a79 13 block 13
+RESULT: DepositContractCreated Event 13: 0x42e1f5088ba91c8f5c7fb850918d2cb2a06ba547 14 block 13
+RESULT: DepositContractCreated Event 14: 0x9ac0f89a9e0f26f656c088554c66f8680a4fbeb3 15 block 13
+RESULT: DepositContractCreated Event 15: 0x9719c99645aa7953397f247b933d5831249e4b14 16 block 13
+RESULT: DepositContractCreated Event 16: 0xf901d796b07b47b6a0248c869e9904c3f792dd03 17 block 13
+RESULT: DepositContractCreated Event 17: 0xb2fc9ead2d4c668062f4b2ac7a635a12d5b208ee 18 block 13
+RESULT: DepositContractCreated Event 18: 0xb94fbfcd1ffe6c2fef0bbd5d6d00e70ad7a251aa 19 block 13
+RESULT: DepositContractCreated Event 19: 0x190adee97706cd73834193e590c61829bbf92b6b 20 block 13
+RESULT: DepositContractCreated Event 20: 0xa7e5889bab3949146aebb1688b6b2e2d86508fb8 21 block 13
+RESULT: DepositContractCreated Event 21: 0xdc41b4fcb997bca7ea321b674f42aef3f6f80b4e 22 block 13
+RESULT: DepositContractCreated Event 22: 0x3095bcaa85d7f65895a0c154a3c19bfe6422b73b 23 block 13
+RESULT: DepositContractCreated Event 23: 0x18e9d325b78e6e18311074ebbfb30347e7c2169a 24 block 13
+RESULT: DepositContractCreated Event 24: 0xde728f2aa4c40430eebec1e8383a6bf981153547 25 block 13
+RESULT: DepositContractCreated Event 25: 0x304561ea449843aaa2c7fa8f2e834d8c44bbba5d 26 block 13
+RESULT: DepositContractCreated Event 26: 0xfbff59478fe72d6e38f8c75db631702649a898ed 27 block 13
+RESULT: DepositContractCreated Event 27: 0xaba647d610a7036aeb1682819a4a201f1407fa62 28 block 13
+RESULT: DepositContractCreated Event 28: 0xf57fe0a273febf54d312c309d4cbbab0e740ae18 29 block 13
+RESULT: DepositContractCreated Event 29: 0xa0a55984de224d9638cd6df4e4779504adab6ce5 30 block 13
+RESULT: DepositContractCreated Event 30: 0x005f01e2ae60a9b788baba63a17012047e20b886 31 block 13
+RESULT: DepositReceived Event 0: 0x0055fbc1ada89056088c75eaf50400af6756ae61 0x59da4a4d09575d187478f468ffda04fc1e8675aa 10.23456789 ETH block 16
+RESULT: DepositReceived Event 1: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 1000 ETH block 18
+RESULT: DepositReceived Event 2: 0x006b2baf3000413d83d257086fd3434a109aa552 0x7e3527064e2b1441956ed786ad58d18b9e3fcf10 100 ETH block 32
+undefined
+> 
+RESULT: PASS Test 2.0 Customer1 Deposit 100 ETH after end - unsuccessful
 1
 > 
 > 

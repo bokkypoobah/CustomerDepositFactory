@@ -100,49 +100,49 @@ failIfGasEqualsGasUsedOrContractAddressNull(depositContractFactoryAddress, depos
 // -----------------------------------------------------------------------------
 testMessage = "Test 1.2 Create 1 Deposit Contract";
 console.log("RESULT: " + testMessage);
-var create12Tx = depositContractFactory.createDepositContracts(1, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
+var tx12 = depositContractFactory.createDepositContracts(1, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
 while (txpool.status.pending > 0) {
 }
 printBalances();
 printContractDynamicDetails();
-printTxData("create12Tx", create12Tx);
-failIfGasEqualsGasUsed(create12Tx, testMessage);
+printTxData("tx12", tx12);
+failIfGasEqualsGasUsed(tx12, testMessage);
 
 
 // -----------------------------------------------------------------------------
 testMessage = "Test 1.3 Contribute before contribution period is active - unsuccessful";
 console.log("RESULT: " + testMessage);
 var depositContract0 = depositContractFactory.depositContracts(0);
-var customerDeposit13Tx = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(100, "ether")});
+var tx13 = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(100, "ether")});
 while (txpool.status.pending > 0) {
 }
 printBalances();
-printTxData("customerDeposit13Tx", customerDeposit13Tx);
-passIfGasEqualsGasUsed(customerDeposit13Tx, testMessage);
+printTxData("tx13", tx13);
+passIfGasEqualsGasUsed(tx13, testMessage);
 
 
 // -----------------------------------------------------------------------------
 testMessage = "Test 1.4 Create 10 Deposit Contracts";
 console.log("RESULT: " + testMessage);
-var create14Tx = depositContractFactory.createDepositContracts(10, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
+var tx14 = depositContractFactory.createDepositContracts(10, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
 while (txpool.status.pending > 0) {
 }
-printTxData("create14Tx", create14Tx);
+printTxData("tx14", tx14);
 printBalances();
 printContractDynamicDetails();
-failIfGasEqualsGasUsed(create14Tx, testMessage);
+failIfGasEqualsGasUsed(tx14, testMessage);
 
 
 // -----------------------------------------------------------------------------
 testMessage = "Test 1.5 Create 20 Deposit Contracts";
 console.log("RESULT: " + testMessage);
-var create15Tx = depositContractFactory.createDepositContracts(20, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
+var tx15 = depositContractFactory.createDepositContracts(20, {from: customerDepositFactoryOwnerAccount, gas: 4500000});
 while (txpool.status.pending > 0) {
 }
-printTxData("create15Tx", create15Tx);
+printTxData("tx15", tx15);
 printBalances();
 printContractDynamicDetails();
-failIfGasEqualsGasUsed(create15Tx, testMessage);
+failIfGasEqualsGasUsed(tx15, testMessage);
 
 
 // -----------------------------------------------------------------------------
@@ -159,13 +159,13 @@ console.log("RESULT: Waited until deposit period is active at " + depositDateFro
   " currentDate=" + new Date());
 
 var depositContract0 = depositContractFactory.depositContracts(0);
-var customerDeposit16Tx = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(10.23456789, "ether")});
+var tx16 = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(10.23456789, "ether")});
 while (txpool.status.pending > 0) {
 }
-printTxData("customerDeposit16Tx", customerDeposit16Tx);
+printTxData("tx16", tx16);
 printBalances();
 printContractDynamicDetails();
-failIfGasEqualsGasUsed(customerDeposit16Tx, testMessage);
+failIfGasEqualsGasUsed(tx16, testMessage);
 console.log("RESULT:   CHECK Test 1.6. Test Customer1 Deposit 10.23456789 ETH - split 0.051172839/0.051172839/10.13222221");
 
 
@@ -173,13 +173,13 @@ console.log("RESULT:   CHECK Test 1.6. Test Customer1 Deposit 10.23456789 ETH - 
 testMessage = "Test 1.7 Customer2 Deposit 1000 ETH";
 console.log("RESULT: " + testMessage);
 var depositContract1 = depositContractFactory.depositContracts(1);
-var customerDeposit17Tx = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 400000, value: web3.toWei(1000, "ether")});
+var tx17 = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 400000, value: web3.toWei(1000, "ether")});
 while (txpool.status.pending > 0) {
 }
-printTxData("customerDeposit17Tx", customerDeposit17Tx);
+printTxData("tx17", tx17);
 printBalances();
 printContractDynamicDetails();
-failIfGasEqualsGasUsed(customerDeposit17Tx, testMessage);
+failIfGasEqualsGasUsed(tx17, testMessage);
 console.log("RESULT:   CHECK Test 1.7. Test Customer2 Deposit 1000 ETH - split 5/5/990");
 
 
@@ -187,18 +187,69 @@ console.log("RESULT:   CHECK Test 1.7. Test Customer2 Deposit 1000 ETH - split 5
 testMessage = "Test 1.8 Customer2 Deposit 100 ETH with too little gas - unsuccessful";
 console.log("RESULT: " + testMessage);
 var depositContract1 = depositContractFactory.depositContracts(1);
-var customerDeposit18Tx = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 50000, value: web3.toWei(100, "ether")});
+var tx18 = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 50000, value: web3.toWei(100, "ether")});
 while (txpool.status.pending > 0) {
 }
-printTxData("customerDeposit18Tx", customerDeposit18Tx);
+printTxData("tx18", tx18);
 printBalances();
 printContractDynamicDetails();
-passIfGasEqualsGasUsed(customerDeposit18Tx, testMessage);
+passIfGasEqualsGasUsed(tx18, testMessage);
 console.log("RESULT:   CHECK Test 1.8. There should be no partial payments");
 
 
 // -----------------------------------------------------------------------------
-testMessage = "Test 1.9 Customer1 Deposit 100 ETH after end - unsuccessful";
+testMessage = "Test 1.9 Close funding";
+console.log("RESULT: " + testMessage);
+var tx19 = depositContractFactory.setFundingClosed(true, {from: customerDepositFactoryOwnerAccount, gas: 400000});
+while (txpool.status.pending > 0) {
+}
+printTxData("tx19", tx19);
+printBalances();
+printContractDynamicDetails();
+failIfGasEqualsGasUsed(tx19, testMessage);
+
+
+// -----------------------------------------------------------------------------
+testMessage = "Test 1.10 Contribute when funding is closed - unsuccessful";
+console.log("RESULT: " + testMessage);
+var depositContract2 = depositContractFactory.depositContracts(2);
+var tx110 = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 400000, value: web3.toWei(100, "ether")});
+while (txpool.status.pending > 0) {
+}
+printTxData("tx110", tx110);
+printBalances();
+printContractDynamicDetails();
+passIfGasEqualsGasUsed(tx110, testMessage);
+console.log("RESULT:   CHECK 1. There should be no payments");
+
+
+// -----------------------------------------------------------------------------
+testMessage = "Test 1.11 Reopen funding";
+console.log("RESULT: " + testMessage);
+var tx111 = depositContractFactory.setFundingClosed(false, {from: customerDepositFactoryOwnerAccount, gas: 400000});
+while (txpool.status.pending > 0) {
+}
+printTxData("tx111", tx111);
+printBalances();
+printContractDynamicDetails();
+failIfGasEqualsGasUsed(tx111, testMessage);
+
+
+// -----------------------------------------------------------------------------
+testMessage = "Test 1.12 Contribute when funding is re-opened";
+console.log("RESULT: " + testMessage);
+var depositContract3 = depositContractFactory.depositContracts(3);
+var tx111 = eth.sendTransaction({from: customer2Account, to: depositContract1, gas: 400000, value: web3.toWei(100, "ether")});
+while (txpool.status.pending > 0) {
+}
+printTxData("tx111", tx111);
+printBalances();
+printContractDynamicDetails();
+failIfGasEqualsGasUsed(tx111, testMessage);
+
+
+// -----------------------------------------------------------------------------
+testMessage = "Test 2.0 Customer1 Deposit 100 ETH after end - unsuccessful";
 console.log("RESULT: " + testMessage);
 
 var depositDateToTime = depositContractFactory.DEPOSIT_DATE_TO();
@@ -211,13 +262,13 @@ console.log("RESULT: Waited until deposit period is inactive at " + depositDateT
   " currentDate=" + new Date());
 
 var depositContract0 = depositContractFactory.depositContracts(0);
-var customerDeposit19Tx = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(100, "ether")});
+var tx20 = eth.sendTransaction({from: customer1Account, to: depositContract0, gas: 400000, value: web3.toWei(100, "ether")});
 while (txpool.status.pending > 0) {
 }
-printTxData("customerDeposit19Tx", customerDeposit19Tx);
+printTxData("tx20", tx20);
 printBalances();
 printContractDynamicDetails();
-passIfGasEqualsGasUsed(customerDeposit19Tx, testMessage);
+passIfGasEqualsGasUsed(tx20, testMessage);
 
 
 EOF
