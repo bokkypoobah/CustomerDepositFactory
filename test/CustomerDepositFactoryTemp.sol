@@ -8,10 +8,10 @@ pragma solidity ^0.4.8;
 
 contract Config {
     // Cannot receive funds before this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_FROM = 1491553792;
+    uint256 public constant DEPOSIT_DATE_FROM = 1491832266;
 
     // Cannot receive funds after this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_TO = 1491553912;
+    uint256 public constant DEPOSIT_DATE_TO = 1491832386;
 
     // Incent account - 0.5%
     uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
