@@ -8,21 +8,21 @@ pragma solidity ^0.4.8;
 
 contract Config {
     // Cannot receive funds before this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_FROM = {{DEPOSIT_DATE_FROM}};
+    uint256 public constant DEPOSIT_DATE_FROM = 1491553792;
 
     // Cannot receive funds after this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_TO = {{DEPOSIT_DATE_TO}};
+    uint256 public constant DEPOSIT_DATE_TO = 1491553912;
 
     // Incent account - 0.5%
     uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
-    address public incentAccount = {{INCENTACCOUNT}};
+    address public incentAccount = 0x0020017ba4c67f76c76b1af8c41821ee54f37171;
 
     // Fees - 0.5%
     uint256 public constant FEE_RATE_PER_THOUSAND = 5;
-    address public constant feeAccount = {{FEEACCOUNT}};
+    address public constant feeAccount = 0x0036f6addb6d64684390f55a92f0f4988266901b;
 
     // Client account - remainder of sent amount
-    address public constant clientAccount = {{CLIENTACCOUNT}};
+    address public constant clientAccount = 0x004e64833635cd1056b948b57286b7c91e62731c;
 }
 
 contract Owned {
