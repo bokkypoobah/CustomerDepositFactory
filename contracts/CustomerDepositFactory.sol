@@ -75,7 +75,7 @@ contract CustomerDepositFactory is Owned, Config {
 
     event DepositContractCreated(address indexed depositContract, uint256 number);
     event DepositReceived(address indexed depositOrigin, 
-        address indexed depositContract, uint _value);
+        address indexed depositContract, uint256 _value);
     event FundingClosed(bool fundingClosed);
 
     function createDepositContracts(uint256 number) onlyOwner {
