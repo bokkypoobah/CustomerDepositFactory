@@ -45,6 +45,9 @@ Example:
 > {"address":"0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95","blockHash":"0x33edb2eefee1a6009046a71c725b9e16b6a72298f160b7cc438127b4efbc4ad3","blockNumber":14,"data":"0x0000000000000000000000000000000000000000000000000000000000000002","logIndex":0,"removed":false,"topics":["0x17b39befb027a95f2f3423ca18f3d98ce369297f24316ebfd763c3b543989477","0x0000000000000000000000007e3527064e2b1441956ed786ad58d18b9e3fcf10"],"transactionHash":"0xa963e7556e522dfc21cf83d4041f761a5adf99b712c36e36770607ef4f59b0ff","transactionIndex":0}
 
 
+In the event data above, the deposit accounts created `0x59da4a4d09575d187478f468ffda04fc1e8675aa` and `0x7e3527064e2b1441956ed786ad58d18b9e3fcf10` are encoded in the second `topics` parameter with 0 padding.
+
+
 <br />
 
 ### To Filter For The DepositReceived Topic
@@ -58,7 +61,7 @@ Example:
 
 >  {"address":"0xebb2634dd3194ba6d75eeb049cd0f73bf9801d95","blockHash":"0x72543062997b246cebe37695f29e60f040f409272d84a8b654534faab00328d4","blockNumber":23,"data":"0x0000000000000000000000000000000000000000000000008e087d455911b400","logIndex":0,"removed":false,"topics":["0x54ef209e319f7d023f4f2c1d4b427c3844f7ef008d20a2104b1f20cb533a7fbf","0x0000000000000000000000000055fbc1ada89056088c75eaf50400af6756ae61","0x00000000000000000000000059da4a4d09575d187478f468ffda04fc1e8675aa"],"transactionHash":"0x74e2f1c380e1b4f02835bd69c33062a077d44c19f967588b8363e7a2ebdd6eae","transactionIndex":0}
 
-In the event data above, `0x0055fbc1ada89056088c75eaf50400af6756ae61` is encoded in the second `topics` parameter with 0 padding.
+In the event data above, the account depositing ethers `0x0055fbc1ada89056088c75eaf50400af6756ae61` is encoded in the second `topics` parameter with 0 padding.
 
 <br />
 
