@@ -95,6 +95,7 @@ printBalances();
 printContractStaticDetails();
 printContractDynamicDetails();
 failIfGasEqualsGasUsedOrContractAddressNull(depositContractFactoryAddress, depositContractFactoryTx, testMessage);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -107,7 +108,8 @@ printBalances();
 printContractDynamicDetails();
 printTxData("tx12", tx12);
 failIfGasEqualsGasUsed(tx12, testMessage);
-
+console.log("RESULT: Transaction input: " + eth.getTransaction(tx12).input);
+console.log("RESULT: ");
 
 // -----------------------------------------------------------------------------
 testMessage = "Test 1.3 Contribute before contribution period is active - unsuccessful";
@@ -119,6 +121,7 @@ while (txpool.status.pending > 0) {
 printBalances();
 printTxData("tx13", tx13);
 passIfGasEqualsGasUsed(tx13, testMessage);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -131,6 +134,8 @@ printTxData("tx14", tx14);
 printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx14, testMessage);
+console.log("RESULT: Transaction input: " + eth.getTransaction(tx14).input);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -143,6 +148,8 @@ printTxData("tx15", tx15);
 printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx15, testMessage);
+console.log("RESULT: Transaction input: " + eth.getTransaction(tx15).input);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -167,6 +174,7 @@ printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx16, testMessage);
 console.log("RESULT:   CHECK Test 1.6. Test Customer1 Deposit 10.23456789 ETH - split 0.051172839/0.051172839/10.13222221");
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -181,6 +189,7 @@ printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx17, testMessage);
 console.log("RESULT:   CHECK Test 1.7. Test Customer2 Deposit 1000 ETH - split 5/5/990");
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -195,6 +204,7 @@ printBalances();
 printContractDynamicDetails();
 passIfGasEqualsGasUsed(tx18, testMessage);
 console.log("RESULT:   CHECK Test 1.8. There should be no partial payments");
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -207,6 +217,8 @@ printTxData("tx19", tx19);
 printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx19, testMessage);
+console.log("RESULT: Transaction input: " + eth.getTransaction(tx19).input);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -221,6 +233,7 @@ printBalances();
 printContractDynamicDetails();
 passIfGasEqualsGasUsed(tx110, testMessage);
 console.log("RESULT:   CHECK 1. There should be no payments");
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -233,6 +246,8 @@ printTxData("tx111", tx111);
 printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx111, testMessage);
+console.log("RESULT: Transaction input: " + eth.getTransaction(tx111).input);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -246,6 +261,7 @@ printTxData("tx111", tx111);
 printBalances();
 printContractDynamicDetails();
 failIfGasEqualsGasUsed(tx111, testMessage);
+console.log("RESULT: ");
 
 
 // -----------------------------------------------------------------------------
@@ -269,6 +285,19 @@ printTxData("tx20", tx20);
 printBalances();
 printContractDynamicDetails();
 passIfGasEqualsGasUsed(tx20, testMessage);
+console.log("RESULT: ");
+
+
+// -----------------------------------------------------------------------------
+testMessage = "Extract Events";
+console.log("RESULT: " + testMessage);
+var filter = web3.eth.filter({ address: [depositContractFactoryAddress], fromBlock: 0, toBlock: "latest" });
+var i = 0;
+filter.watch(function (error, result) {
+  console.log("RESULT: Filter " + i++ + ": " + JSON.stringify(result));
+});
+filter.stopWatching();
+console.log("RESULT: ");
 
 
 EOF

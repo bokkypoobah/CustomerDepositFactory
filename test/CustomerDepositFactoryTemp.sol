@@ -12,10 +12,10 @@ pragma solidity ^0.4.8;
 
 contract Config {
     // Cannot receive funds before this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_FROM = 1491837452;
+    uint256 public constant DEPOSIT_DATE_FROM = 1491893713;
 
     // Cannot receive funds after this date. DO NOT USE `now`
-    uint256 public constant DEPOSIT_DATE_TO = 1491837572;
+    uint256 public constant DEPOSIT_DATE_TO = 1491893833;
 
     // Incent account - 0.5%
     uint256 public constant INCENT_RATE_PER_THOUSAND = 5;
@@ -75,7 +75,7 @@ contract CustomerDepositFactory is Owned, Config {
 
     event DepositContractCreated(address indexed depositContract, uint256 number);
     event DepositReceived(address indexed depositOrigin, 
-        address indexed depositContract, uint _value);
+        address indexed depositContract, uint256 _value);
     event FundingClosed(bool fundingClosed);
 
     function createDepositContracts(uint256 number) onlyOwner {
