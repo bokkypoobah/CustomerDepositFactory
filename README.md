@@ -85,5 +85,12 @@ The second event has `fundingClosed` set to **false**
 
 The test cases can be found in [test/01_test1.sh](test/01_test1.sh) and the results from this test in [test/test1results.txt](test/test1results.txt).
 
+<br />
+
+## Deployment Checks
+
+After deployment of the contract to the Ethereum blockchain, double check the configuration data - **DEPOSIT_DATE_FROM**, **DEPOSIT_DATE_TO**, **incentAccount**, **feeAccount** and **clientAccount**.
+
+<br />
 
 Enjoy. (c) Incent Loyalty Pty Ltd and Bok Consulting Pty Ltd 2017. The MIT Licence.
