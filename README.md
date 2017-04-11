@@ -17,6 +17,8 @@ Append the 0 padded number of deposit contracts to be created, for example to cr
 
     0x158911480000000000000000000000000000000000000000000000000000000000000014
 
+<br />
+
 ### Set The Funding Closed Flag
 
 The `setFundingClosed(bool _fundingClosed)` function signature follows:
@@ -28,6 +30,8 @@ Append the 0 padded boolean flag 0 (off) or 1 (on), for example to close off the
 
     0x84f08c6b0000000000000000000000000000000000000000000000000000000000000001
 
+<br />
+
 ### To Filter For The DepositContractCreated Topic
 
 The `DepositContractCreated(address indexed depositContract, uint256 number)` event signature follows:
@@ -36,12 +40,16 @@ The `DepositContractCreated(address indexed depositContract, uint256 number)` ev
     "0x17b39befb027a95f2f3423ca18f3d98ce369297f24316ebfd763c3b543989477"
 
 
+<br />
+
 ### To Filter For The DepositReceived Topic
 
 The `DepositReceived(address indexed depositOrigin, address indexed depositContract, uint256 _value)` event signature follows:
 
     > web3.sha3('DepositReceived(address,address,uint256)')
     "0x54ef209e319f7d023f4f2c1d4b427c3844f7ef008d20a2104b1f20cb533a7fbf"
+
+<br />
 
 ### To Filter For The FundingClosed Topic
 
