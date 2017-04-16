@@ -129,7 +129,7 @@ The test cases can be found in [test/01_test1.sh](test/01_test1.sh) and the resu
 
 ## Security Audit
 
-You can find the security audit [here](SecurityAudit).
+You can find the security audit [here](SecurityAudit.md).
 
 <br />
 
