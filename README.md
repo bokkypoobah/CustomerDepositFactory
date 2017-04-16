@@ -26,13 +26,15 @@ The CustomerDepositFactory smart contract allows Incent Loyalty to create a seri
 
 ## Deposit Contract Creation And Gas Usage
 
-From the testing of the deposit contracts, the following gas is required for the different number of deposit contracts being created when calling the `createDepositContracts(uint256 number)` function:
+From the [testing](test/test1results.txt) of the deposit contracts, the following gas is required for the different number of deposit contracts being created when calling the `createDepositContracts(uint256 number)` function:
 
 Number of deposit contracts created | Gas usage
 --- | ---
-1 | 123
-10 | 123
-20 | 123
+1 | 206,398
+10 | 1,717,330
+20 | 3,412,810
+
+Creating more than 20 deposit contract in the one transaction may result in an error due to the [block gas limits](https://etherscan.io/chart/gaslimit).
 
 <br />
 
