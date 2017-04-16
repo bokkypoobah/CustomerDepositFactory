@@ -49,7 +49,7 @@ This report is a security audit of the CustomerDepositFactory smart contract.
   * For example see [Security Alert – Solidity – Variables can be overwritten in storage](https://blog.ethereum.org/2016/11/01/security-alert-solidity-variables-can-overwritten-storage/)
 * There is the possibility of a miner mining a block and skewing the `now` timestamp. This can result valid customer deposits being rejected and invalid customer deposits being accepted, and this would be most relevant at the end of the deposit period
 * If possible, run a [bug bounty program](https://github.com/ConsenSys/smart-contract-best-practices#bug-bounty-programs) on this contract code
-* All of the code, the testing and the security audit were conducted by the Bok Consulting, and this is a potential conflict of interest
+* All of the code, the testing and the security audit were conducted by Bok Consulting, and this is a potential conflict of interest
 
 <br />
 
