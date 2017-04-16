@@ -1,13 +1,17 @@
-# Security Audit Of The BetterAuction Smart Contract
+# Security Audit Of The CustomerDepositFactory Smart Contract
+
+The CustomerDepositFactory smart contract allows Incent to create a series of uniquely addressed deposit contracts on the Ethereum blockchain. Each of these deposit contracts can be provided to customers and when customers send ethers to their deposit contract, their ethers will be split via the factory contract in a 0.5%/0.5%/99% ratio into 3 Ethereum addresses.
+
+This report is a security audit of the CustomerDepositFactory smart contract.
 
 ## Background And History
-* Apr 11 2017 CustomerDepositFactor contract completed for Incent Loyalty
+* Apr 11 2017 CustomerDepositFactory contract completed for Incent Loyalty
 * Apr 11 2017 Bok Consulting completed the test script [test/01_test1.sh](test/01_test1.sh) with the generated result documented in [test/test1results.txt](test/test1results.txt)
 * Apr 16 2017 Bok Consulting completed this security audit report
 
 <br />
 
-## Security Overview Of The BetterAuction
+## Security Overview Of The CustomerDepositFactory
 * [x] The smart contract has been kept relatively simple
 * [x] This smart contract does not accumulate deposits of ethers but just passes these amounts to 3 different addresses
 * [x] The code has been tested for the normal use cases, and around the boundary cases
