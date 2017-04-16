@@ -1,6 +1,6 @@
 # Security Audit Of The CustomerDepositFactory Smart Contract
 
-The CustomerDepositFactory smart contract allows Incent to create a series of uniquely addressed deposit contracts on the Ethereum blockchain. Each of these deposit contracts can be provided to customers and when customers send ethers to their deposit contract, their ethers will be split via the factory contract in a 0.5%/0.5%/99% ratio into 3 Ethereum addresses.
+The CustomerDepositFactory smart contract allows Incent Loyalty to create a series of uniquely addressed deposit contracts on the Ethereum blockchain. Each of these deposit contracts can be provided to customers and when customers send ethers to their deposit contract, their ethers will be split via the factory contract in a 0.5%/0.5%/99% ratio into 3 Ethereum addresses.
 
 This report is a security audit of the CustomerDepositFactory smart contract.
 
@@ -10,7 +10,7 @@ This report is a security audit of the CustomerDepositFactory smart contract.
 
 **Table of contents**
 * [Background And History](#background-and-history)
-* [Security Overview Of The BetterAuction](#security-overview-of-the-betterauction)
+* [Security Overview Of The CustomerDepositFactory](#security-overview-of-the-customerdepositfactory)
   * [Other Notes](#other-notes)
 * [Comments On The Source Code](#comments-on-the-source-code)
 * [References](#references)

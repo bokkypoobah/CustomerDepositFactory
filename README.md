@@ -4,6 +4,25 @@ This is an Ethereum contract that allows unique deposit contracts to be created 
 
 <br />
 
+<hr />
+
+**Table of contents**
+
+* [JSON RPC Interaction With This Contract](#json-rpc-interaction-with-this-contract)
+  * [Creating New Deposit Contract Addresses](#creating-new-deposit-contract-addresses)
+  * [Set The Funding Closed Flag](#set-the-funding-closed-flag)
+  * [To Filter For The DepositContractCreated Topic](#to-filter-for-the-depositcontractcreated-topic)
+  * [To Filter For The DepositReceived Topic](#to-filter-for-the-depositreceived-topic)
+  * [To Filter For The FundingClosed Topic](#to-filter-for-the-fundingclosed-topic)
+* [Testing And Results](#testing-and-results)
+* [Security Audit](#security-audit)
+* [Deployment Checks](#deployment-checks)
+
+
+<br />
+
+<hr />
+
 ## JSON RPC Interaction With This Contract
 
 ### Creating New Deposit Contract Addresses
@@ -84,6 +103,12 @@ The second event has `fundingClosed` set to **false**
 ## Testing And Results
 
 The test cases can be found in [test/01_test1.sh](test/01_test1.sh) and the results from this test in [test/test1results.txt](test/test1results.txt).
+
+<br />
+
+## Security Audit
+
+You can find the security audit [here](SecurityAudit).
 
 <br />
 
