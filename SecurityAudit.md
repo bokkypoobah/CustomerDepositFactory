@@ -9,28 +9,26 @@
 
 ## Security Overview Of The BetterAuction
 * [x] The smart contract has been kept relatively simple
+* [x] This smart contract does not accumulate deposits of ethers but just passes these amounts to 3 different addresses
 * [x] The code has been tested for the normal use cases, and around the boundary cases
 * [x] The testing has been done using geth 1.5.9-stable and solc 0.4.9+commit.364da425.Darwin.appleclang instead of one of the testing frameworks and JavaScript VMs to simulate the live environment as closely as possible
-* [x] Only the `send(...)` call has been used instead of `call.value()()` for transferring funds with limited gas to minimise reentrancy attacks
-* [x] The `send(...)` calls are the last statements in the control flow to prevent the hijacking of the control flow
+* [x] `factory.receiveDeposit.value(msg.value)(msg.sender)` is used to pass ethers from the customer's deposit contract to the factory contract. As the factory contract is trusted, and the 3 destination addresses are trusted, there is little security risk of using this call method.
+* [x] The `send(...)` call has been used instead of `call.value()()` for transferring funds with limited gas from the factory contract to the 3 trusted destination addresses.
+* [x] The `send(...)` calls are the last statements in the control flow to prevent the hijacking of the control flow, but the 3 destination addresses are trusted
 * [x] The return status from `send(...)` calls are all checked and invalid results will **throw** 
-* [x] Funds are transferred from this auction contract by account holders "pulling" their funds
-  * [x] Only the beneficiary can call `beneficiaryRecoverFunds(...)` to receive the beneficiary's funds
-  * [x] Only the beneficiary can call `beneficiaryCloseAuction(...)` to receive the winning bidder's funds
-  * [x] Non-highest bidders retrieve their funds by calling `nonHighestBidderRefund(...)`
 * [x] There is no logic with potential division by zero errors
 * [x] All numbers used are uint256, reducting the risk of errors from type conversions
 * [x] There is no logic with potential overflow errors, as the numbers added are taken from the value of ethers sent in each transaction, this value is validated as part of the sent transactions and these values are small compared to the uint256 limits
-* [x] There is no logic with potential underflow errors as there are no subtractions used in this code
+* [x] There is no logic with potential underflow errors. While there are some subtractions used in this code, the range of numbers is limited by the values being a known factor of `msg.value`
 * [x] Function and event names are differentiated by case - function names begin with a lowercase character and event names begin with an uppercase character
 
 ### Other Notes
 * Ethers and ERC20 tokens can get trapped in this contract
 * While the CustomerDepositFactory Solidity code logic has been audited, there are small possibilities of errors that could compromise the security of this contract. This includes errors in the Solidity to bytecode compilation, errors in the execution of the VM code, or security failures in the Ethereum blockchain
   * For example see [Security Alert – Solidity – Variables can be overwritten in storage](https://blog.ethereum.org/2016/11/01/security-alert-solidity-variables-can-overwritten-storage/)
-* There is the possibility of a miner mining a block and skewing the `now` timestamp. This can result valid bids being rejected and invalid bids being accepted, and this would be most relevant at the end of the auction period
+* There is the possibility of a miner mining a block and skewing the `now` timestamp. This can result valid customer deposits being rejected and invalid customer deposits being accepted, and this would be most relevant at the end of the deposit period
 * If possible, run a [bug bounty program](https://github.com/ConsenSys/smart-contract-best-practices#bug-bounty-programs) on this contract code
-* Some of the recommended code changes, the testing and the security audit were conducted by the same individual, BokkyPooBah / Bok Consulting, and this is a potential conflict of interest
+* All of the code, the testing and the security audit were conducted by the same individual, BokkyPooBah / Bok Consulting, and this is a potential conflict of interest
 
 <br />
 
@@ -52,9 +50,16 @@ pragma solidity ^0.4.8;
 // ----------------------------------------------------------------------------
 
 contract Config {
+
+    // NOTE: 1. Make sure that this number is double checked to confirm
+    //          that the correct date is used
+    //
     // Cannot receive funds before this date. DO NOT USE `now`
     uint256 public constant DEPOSIT_DATE_FROM = {{DEPOSIT_DATE_FROM}};
 
+    // NOTE: 1. Make sure that this number is double checked to confirm
+    //          that the correct date is used
+    //
     // Cannot receive funds after this date. DO NOT USE `now`
     uint256 public constant DEPOSIT_DATE_TO = {{DEPOSIT_DATE_TO}};
 
@@ -70,6 +75,8 @@ contract Config {
     address public constant clientAccount = {{CLIENTACCOUNT}};
 }
 
+// NOTE: 1. Standard Owned contract, with the owner set in the constructor
+//
 contract Owned {
     address public owner;
     event OwnershipTransferred(address indexed _from, address indexed _to);
@@ -89,6 +96,8 @@ contract Owned {
     }
 }
 
+// NOTE: 1. Customer deposit contract where different contracts are assigned to different users
+//
 contract CustomerDeposit {
     uint256 public totalDeposit = 0;
     CustomerDepositFactory public factory;
