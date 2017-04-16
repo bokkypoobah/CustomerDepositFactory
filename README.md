@@ -8,6 +8,7 @@ The CustomerDepositFactory smart contract allows Incent Loyalty to create a seri
 
 **Table of contents**
 
+* [Deposit Contract Creation And Gas Usage](#deposit-contract-creation-and-gas-usage)
 * [JSON RPC Interaction With This Contract](#json-rpc-interaction-with-this-contract)
   * [Creating New Deposit Contract Addresses](#creating-new-deposit-contract-addresses)
   * [Set The Funding Closed Flag](#set-the-funding-closed-flag)
@@ -18,6 +19,20 @@ The CustomerDepositFactory smart contract allows Incent Loyalty to create a seri
 * [Security Audit](#security-audit)
 * [Deployment Checks](#deployment-checks)
 
+
+<br />
+
+<hr />
+
+## Deposit Contract Creation And Gas Usage
+
+From the testing of the deposit contracts, the following gas is required for the different number of deposit contracts being created when calling the `createDepositContracts(uint256 number)` function:
+
+Number of deposit contracts created | Gas usage
+--- | ---
+1 | 123
+10 | 123
+20 | 123
 
 <br />
 
@@ -100,17 +115,23 @@ The second event has `fundingClosed` set to **false**
 
 <br />
 
+<hr />
+
 ## Testing And Results
 
 The test cases can be found in [test/01_test1.sh](test/01_test1.sh) and the results from this test in [test/test1results.txt](test/test1results.txt).
 
 <br />
 
+<hr />
+
 ## Security Audit
 
 You can find the security audit [here](SecurityAudit).
 
 <br />
+
+<hr />
 
 ## Deployment Checks
 
