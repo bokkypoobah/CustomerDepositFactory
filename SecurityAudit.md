@@ -4,6 +4,21 @@ The CustomerDepositFactory smart contract allows Incent to create a series of un
 
 This report is a security audit of the CustomerDepositFactory smart contract.
 
+<br />
+
+<hr />
+
+**Table of contents**
+* [Background And History](#background-and-history)
+* [Security Overview Of The BetterAuction](#security-overview-of-the-betterauction)
+  * [Other Notes](#other-notes)
+* [Comments On The Source Code](#comments-on-the-source-code)
+* [References](#references)
+
+<br />
+
+<hr />
+
 ## Background And History
 * Apr 11 2017 CustomerDepositFactory contract completed for Incent Loyalty
 * Apr 11 2017 Bok Consulting completed the test script [test/01_test1.sh](test/01_test1.sh) with the generated result documented in [test/test1results.txt](test/test1results.txt)
