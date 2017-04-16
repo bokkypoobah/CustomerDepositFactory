@@ -1,6 +1,6 @@
 # Customer Deposit Factory
 
-This is an Ethereum contract that allows unique deposit contracts to be created for customers to deposit funds for an ICO.
+The CustomerDepositFactory smart contract allows Incent Loyalty to create a series of uniquely addressed deposit contracts on the Ethereum blockchain. Each of these deposit contracts can be provided to customers and when customers send ethers to their deposit contract, their ethers will be split via the factory contract in a 0.5%/0.5%/99% ratio into 3 Ethereum addresses.
 
 <br />
 
