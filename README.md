@@ -99,6 +99,15 @@ Example:
 
 In the event data above, the account depositing ethers `0x0055fbc1ada89056088c75eaf50400af6756ae61` is encoded in the second `topics` parameter with 0 padding.
 
+And the `_value` parameter is encoded in the data parameter:
+
+    > new BigNumber("0000000000000000000000000000000000000000000000008e087d455911b400", 16)
+    10234567890000000000
+    > web3.fromWei(new BigNumber("8e087d455911b400", 16), "ether")
+    "10.23456789"
+    > new BigNumber("0000000000000000000000000000000000000000000000008e087d455911b400", 16).div(1e18)
+    10.23456789
+
 <br />
 
 ### To Filter For The FundingClosed Topic
